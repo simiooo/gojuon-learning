@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import './App.css'
-import { Button, Card, Col, Form, Input, Row, Space, Tooltip } from 'antd'
+import { Button, Card, Col, Form, Input, Row, Space, Tooltip, message } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 
 const gojuon = `あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほやゆよらりるれろわをえん`.split('')
@@ -65,7 +65,7 @@ function App() {
   const createRandomIndex = (): number => {
     return Math.floor(Math.random() * gojuon.length)
   }
-
+  const inputref = useRef(null)
   const [word, setWord] = useState<string>(gojuon[createRandomIndex()])
   const [form] = Form.useForm()
   const [error, setError] = useState<boolean>(false)
@@ -78,9 +78,14 @@ function App() {
           form.resetFields()
           createRandomWord()
           setError(false)
+          console.log(inputref)
+          inputref.current.focus({
+            cursor: 'start',
+          })
         }}
         onFinishFailed={() => {
           setError(true)
+          message.error('罗马字不正确')
         }}
       >
         <Row
@@ -128,6 +133,7 @@ function App() {
               >
                 <Input
                   maxLength={8}
+                  ref={inputref}
                   placeholder='请输入罗马字'
                   bordered={false}></Input>
               </Form.Item>
