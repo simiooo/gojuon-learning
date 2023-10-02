@@ -78,9 +78,9 @@ function App() {
           form.resetFields()
           createRandomWord()
           setError(false)
-          console.log(inputref)
-          inputref.current.focus({
-            cursor: 'start',
+          setTimeout(() => {
+            inputref.current.focus()
+
           })
         }}
         onFinishFailed={() => {
@@ -102,7 +102,11 @@ function App() {
                   textAlign: 'center'
                 }}
               >
-                <Space><div>{word}</div>
+                <Space><div
+                style={{
+                  color: error ? 'red' : undefined
+                }}
+                >{word}</div>
                 {error ? <CloseOutlined 
                 style={{
                   color: 'red',
@@ -143,7 +147,7 @@ function App() {
             span={24}
           >
             <Tooltip
-              title="输入对应的正确罗马字后可“下一步”"
+              title="输入对应的正确罗马字后可“下一个”"
             >
               <Row
                 gutter={[10, 16]}
@@ -154,10 +158,18 @@ function App() {
                     noStyle
                     name="submit"
                   >
+                    <Space>
                     <Button
                       htmlType='submit'
                       type={"primary"}
                     >下一个</Button>
+                    {/* <Button
+                    onClick={() => {
+                      inputref.current.focus()
+                    }}
+                    >a</Button> */}
+                    </Space>
+                    
                   </Form.Item>
                 </Col>
               </Row>
