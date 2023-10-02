@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
-import { Button, Card, Col, Form, Input, Row, Space, Tooltip, message } from 'antd'
+import { Button, Card, Col, Form, Input, Row, Space, Tag, Tooltip, message } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import { gojuon, gojuon_map } from './goguon'
 
@@ -22,38 +22,49 @@ function App() {
   const [word, setWord] = useState<string>(gojuon[createRandomIndex()])
   const [form] = Form.useForm()
   const [error, setError] = useState<boolean>(false)
-  const [doneList, setDoneList] = useState<{status: "sucess" | 'error', content: string}[]>([])
-  
+  const [doneList, setDoneList] = useState<{ status: "sucess" | 'error', content: string }[]>([])
+
   const renderScore = useMemo(() => {
     return `${doneList.filter(vl => vl.status === 'sucess').length}/${doneList.length}`
   }, [doneList])
 
   const renderPercentScore = useMemo(() => {
-    return `${ (doneList.filter(vl => vl.status === 'sucess').length/(doneList.length || 1) * 100).toFixed(2)}%`
+    return `${(doneList.filter(vl => vl.status === 'sucess').length / (doneList.length || 1) * 100).toFixed(2)}%`
   }, [doneList])
 
   useEffect(() => {
-    if(doneList.length > 0) {
+    if (doneList.length > 0) {
       window.localStorage.setItem('doneList', JSON.stringify(doneList))
     }
-    if(doneList.length > 200) {
+    if (doneList.length > 200) {
       doneList.shift()
       setDoneList([...doneList])
     }
   }, [doneList])
 
   useEffect(() => {
-    console.log(JSON.parse(window.localStorage.getItem('doneList')));
-    
     setDoneList(JSON.parse(window.localStorage.getItem('doneList')) ?? [])
+    setMissMap(new Map(JSON.parse(window.localStorage.getItem('missMap'))) ?? new Map())
   }, [])
+
+  const [missMap, setMissMap] = useState<Map<string, number>>(new Map())
+  const [rank, setRank] = useState([])
+
+  useEffect(() => {
+    if(missMap.size > 0) {
+      window.localStorage.setItem('missMap', JSON.stringify([...missMap])) 
+    }
+    
+    setRank([...missMap].sort((pre, val) => {
+      return val[1] - pre[1]
+    }).slice(0, 10))
+  }, [missMap])
 
   return (
     <div className='main'>
       <Form
         form={form}
         onFinish={async (v) => {
-          console.log(v)
           setDoneList([...doneList, {
             status: 'sucess',
             content: v?.word
@@ -67,7 +78,9 @@ function App() {
           })
         }}
         onFinishFailed={(v) => {
-          console.log(v)
+          const cnt = missMap.get(word) ?? 0
+          missMap.set(word, cnt + 1)
+          setMissMap(new Map([...missMap]))
           setDoneList([...doneList, {
             status: 'error',
             content: v?.values?.word
@@ -91,18 +104,18 @@ function App() {
                 }}
               >
                 <Space><div
-                style={{
-                  color: error ? 'red' : undefined
-                }}
+                  style={{
+                    color: error ? 'red' : undefined
+                  }}
                 >{word}</div>
-                {error ? <CloseOutlined 
-                style={{
-                  color: 'red',
-                
-                }}
-                /> : undefined}
+                  {error ? <CloseOutlined
+                    style={{
+                      color: 'red',
+
+                    }}
+                  /> : undefined}
                 </Space>
-                </h1>}
+              </h1>}
             >
               <Form.Item
                 noStyle
@@ -147,17 +160,17 @@ function App() {
                     name="submit"
                   >
                     <Space>
-                    <Button
-                      htmlType='submit'
-                      type={"primary"}
-                    >下一个</Button>
-                    {/* <Button
+                      <Button
+                        htmlType='submit'
+                        type={"primary"}
+                      >下一个</Button>
+                      {/* <Button
                     onClick={() => {
                       inputref.current.focus()
                     }}
                     >a</Button> */}
                     </Space>
-                    
+
                   </Form.Item>
                 </Col>
               </Row>
@@ -166,12 +179,37 @@ function App() {
         </Row>
       </Form>
       <div className="score">
-        <Space>
-          <div>{renderPercentScore}</div>
-          <div>{renderScore}</div>
-        </Space>
-        
-        </div>
+        <Row justify={'end'} gutter={[10, 16]}>
+          <Col span={24}>
+            <Row gutter={[4, 6]} justify={'end'}>
+              <Col>
+                {/* <Card> */}
+                  {
+                    rank.map(ele => <Tag>
+                      {ele[0]}
+                    </Tag>)
+                  }
+                {/* </Card> */}
+
+              </Col>
+            </Row>
+          </Col>
+
+          <Col span={24}>
+            <Row justify={'end'}>
+              <Col>
+                <Space>
+                  <div>{renderPercentScore}</div>
+                  <div>{renderScore}</div>
+                </Space>
+              </Col>
+            </Row>
+
+          </Col>
+        </Row>
+
+
+      </div>
     </div>
   )
 }
