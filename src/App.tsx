@@ -1,9 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState } from 'react'
 import './App.css'
-import { Alert, Button, Card, Col, Form, Input, Popover, Row, Space, Tooltip } from 'antd'
-import { NamePath } from 'antd/es/form/interface'
+import { Button, Card, Col, Form, Input, Row, Space, Tooltip } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 
 const gojuon = `あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほやゆよらりるれろわをえん`.split('')
@@ -16,7 +13,7 @@ const gojuon_map = {
   'か': 'ka',
   'き': 'ki',
   'く': 'ku',
-  'け': 'ka',
+  'け': 'ke',
   'こ': 'ko',
   'さ': 'sa',
   'し': 'si/shi',
@@ -35,7 +32,7 @@ const gojuon_map = {
   'の': 'no',
   'は': 'ha',
   'ひ': 'hi',
-  'ふ': 'hu',
+  'ふ': 'hu/fu',
   'へ': 'he',
   'ほ': 'ho',
   'ま': 'ma',
