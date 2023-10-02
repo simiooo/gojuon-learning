@@ -29,7 +29,7 @@ function App() {
   }, [doneList])
 
   const renderPercentScore = useMemo(() => {
-    return `${doneList.filter(vl => vl.status === 'sucess').length/(doneList.length || 1) * 100}%`
+    return `${ (doneList.filter(vl => vl.status === 'sucess').length/(doneList.length || 1) * 100).toFixed(2)}%`
   }, [doneList])
 
   useEffect(() => {
