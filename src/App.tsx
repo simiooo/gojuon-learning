@@ -144,6 +144,16 @@ function App() {
                   bordered={false}></Input>
               </Form.Item>
             </Card>
+            <Row style={{
+              marginTop: '6px'
+            }} justify={'end'}>
+              <Col>
+                <Space>
+                  <div>{renderPercentScore}</div>
+                  <div>{renderScore}</div>
+                </Space>
+              </Col>
+            </Row>
           </Col>
           <Col
             span={24}
@@ -196,19 +206,7 @@ function App() {
       </Form>
       <div className="score">
         <Row justify={'end'} gutter={[10, 16]}>
-
-
-          <Col span={24}>
-            <Row justify={'end'}>
-              <Col>
-                <Space>
-                  <div>{renderPercentScore}</div>
-                  <div>{renderScore}</div>
-                </Space>
-              </Col>
-            </Row>
-
-          </Col>
+          
         </Row>
 
 
