@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
-import { Button, Card, Col, Form, Input, Row, Space, Tag, Tooltip, message } from 'antd'
+import { Button, Card, Col, Divider, Form, Input, Row, Space, Tag, Tooltip, message } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import { gojuon, gojuon_map } from './goguon'
 
@@ -51,10 +51,10 @@ function App() {
   const [rank, setRank] = useState([])
 
   useEffect(() => {
-    if(missMap.size > 0) {
-      window.localStorage.setItem('missMap', JSON.stringify([...missMap])) 
+    if (missMap.size > 0) {
+      window.localStorage.setItem('missMap', JSON.stringify([...missMap]))
     }
-    
+
     setRank([...missMap].sort((pre, val) => {
       return val[1] - pre[1]
     }).slice(0, 10))
@@ -95,6 +95,7 @@ function App() {
         >
           <Col
             span={24}
+            flex={'500px'}
           >
             <Card
               bordered
@@ -164,11 +165,6 @@ function App() {
                         htmlType='submit'
                         type={"primary"}
                       >下一个</Button>
-                      {/* <Button
-                    onClick={() => {
-                      inputref.current.focus()
-                    }}
-                    >a</Button> */}
                     </Space>
 
                   </Form.Item>
@@ -176,24 +172,31 @@ function App() {
               </Row>
             </Tooltip>
           </Col>
-        </Row>
-      </Form>
-      <div className="score">
-        <Row justify={'end'} gutter={[10, 16]}>
-          <Col span={24}>
-            <Row gutter={[4, 6]} justify={'end'}>
+
+          <Col flex={'500px'} span={24}>
+            <Divider orientation="left" plain>
+              常错假名
+            </Divider>
+            <Row gutter={[4, 6]} justify={'start'}>
               <Col>
-                {/* <Card> */}
+                <Row  gutter={[6, 4]}>
                   {
-                    rank.map(ele => <Tag>
-                      {ele[0]}
-                    </Tag>)
+                    rank.map(ele => <Col>
+                      <Tag>
+                        {ele[0]}
+                      </Tag>
+                    </Col>)
                   }
-                {/* </Card> */}
+                </Row>
 
               </Col>
             </Row>
           </Col>
+        </Row>
+      </Form>
+      <div className="score">
+        <Row justify={'end'} gutter={[10, 16]}>
+
 
           <Col span={24}>
             <Row justify={'end'}>
