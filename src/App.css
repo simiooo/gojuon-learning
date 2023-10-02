@@ -5,3 +5,10 @@
   align-items: center;
   justify-content: center;
 }
+.score{
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  font: 400 14px 'sans-serif';
+  color: #616161;
+}

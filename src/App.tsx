@@ -1,57 +1,10 @@
-import { useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { Button, Card, Col, Form, Input, Row, Space, Tooltip, message } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
+import { gojuon, gojuon_map } from './goguon'
 
-const gojuon = `あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほやゆよらりるれろわをえん`.split('')
-const gojuon_map = {
-  'あ': 'a',
-  'い': 'i',
-  'う': 'u',
-  'え': 'e',
-  'お': 'o',
-  'か': 'ka',
-  'き': 'ki',
-  'く': 'ku',
-  'け': 'ke',
-  'こ': 'ko',
-  'さ': 'sa',
-  'し': 'si/shi',
-  'す': 'su',
-  'せ': 'se',
-  'そ': 'so',
-  'た': 'ta',
-  'ち': 'ti/chi',
-  'つ': 'tu/tsu',
-  'て': 'te',
-  'と': 'to',
-  'な': 'na',
-  'に': 'ni',
-  'ぬ': 'nu',
-  'ね': 'ne',
-  'の': 'no',
-  'は': 'ha',
-  'ひ': 'hi',
-  'ふ': 'hu/fu',
-  'へ': 'he',
-  'ほ': 'ho',
-  'ま': 'ma',
-  'み': 'mi',
-  'む': 'mu',
-  'め': 'me',
-  'も': 'mo',
-  'や': 'ya',
-  'ゆ': 'yu',
-  'よ': 'yo',
-  'ら': 'ra',
-  'り': 'ri',
-  'る': 'ru',
-  'れ': 're',
-  'ろ': 'ro',
-  'わ': 'wa',
-  'を': 'wo',
-  'ん': 'n',
-} as const
+
 
 function App() {
 
@@ -69,12 +22,42 @@ function App() {
   const [word, setWord] = useState<string>(gojuon[createRandomIndex()])
   const [form] = Form.useForm()
   const [error, setError] = useState<boolean>(false)
+  const [doneList, setDoneList] = useState<{status: "sucess" | 'error', content: string}[]>([])
+  
+  const renderScore = useMemo(() => {
+    return `${doneList.filter(vl => vl.status === 'sucess').length}/${doneList.length}`
+  }, [doneList])
+
+  const renderPercentScore = useMemo(() => {
+    return `${doneList.filter(vl => vl.status === 'sucess').length/(doneList.length || 1) * 100}%`
+  }, [doneList])
+
+  useEffect(() => {
+    if(doneList.length > 0) {
+      window.localStorage.setItem('doneList', JSON.stringify(doneList))
+    }
+    if(doneList.length > 200) {
+      doneList.shift()
+      setDoneList([...doneList])
+    }
+  }, [doneList])
+
+  useEffect(() => {
+    console.log(JSON.parse(window.localStorage.getItem('doneList')));
+    
+    setDoneList(JSON.parse(window.localStorage.getItem('doneList')) ?? [])
+  }, [])
 
   return (
     <div className='main'>
       <Form
         form={form}
-        onFinish={async () => {
+        onFinish={async (v) => {
+          console.log(v)
+          setDoneList([...doneList, {
+            status: 'sucess',
+            content: v?.word
+          }])
           form.resetFields()
           createRandomWord()
           setError(false)
@@ -83,7 +66,12 @@ function App() {
 
           })
         }}
-        onFinishFailed={() => {
+        onFinishFailed={(v) => {
+          console.log(v)
+          setDoneList([...doneList, {
+            status: 'error',
+            content: v?.values?.word
+          }])
           setError(true)
           message.error('罗马字不正确')
         }}
@@ -177,7 +165,13 @@ function App() {
           </Col>
         </Row>
       </Form>
-
+      <div className="score">
+        <Space>
+          <div>{renderPercentScore}</div>
+          <div>{renderScore}</div>
+        </Space>
+        
+        </div>
     </div>
   )
 }
