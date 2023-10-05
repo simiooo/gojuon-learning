@@ -16,12 +16,16 @@ export default defineConfig({
         background_color: '#ffffff',
         icons: [
           {
-            src: 'gojuon-icon2.png',
+            src: '/gojuonIcon2.png',
+            type: 'image/png', 
+          },
+          {
+            src: '/gojuonIcon2.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: 'gojuon-icon3.png',
+            src: '/gojuonIcon3.png',
             sizes: '256x256',
             type: 'image/png',
           },
