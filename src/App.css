@@ -1,9 +1,17 @@
 .main{
-  height: 90vh;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  border: 0px solid #fff;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+
+}
+.main::-webkit-scrollbar{
+  display: none;
 }
 .score{
   position: fixed;

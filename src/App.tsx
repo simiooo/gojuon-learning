@@ -1,25 +1,56 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
-import { Button, Card, Col, Divider, Form, Input, Row, Space, Tag, Tooltip, message } from 'antd'
+import { Button, Card, Col, Divider, Form, Input, Row, Select, Space, Tag, TagProps, Tooltip, message } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
-import { gojuon, gojuon_map } from './goguon'
+import { hiragana, hiragana_map, katakana, katakana_map } from './goguon'
 
 
+const tagRender = (props: TagProps & { label: any, value: any }) => {
+  const { label, value, closable, onClose } = props;
+  const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  return (
+    <Tag
+      color={value}
+      onMouseDown={onPreventMouseDown}
+      closable={closable}
+      onClose={onClose}
+      style={{ marginRight: 3 }}
+    >
+      {label}
+    </Tag>
+  );
+};
 
 function App() {
 
-
-  const createRandomWord = () => {
-    const word = gojuon[createRandomIndex()]
+  const wordTypeList = [
+    {
+      label: '平假名',
+      value: 'hiragana',
+    },
+    {
+      label: '片假名',
+      value: 'katakana',
+    },
+  ]
+  const [wordType, setWordType] = useState<string[]>(['hiragana'])
+  const renderWordsList = useMemo(() => {
+    return [...hiragana, ...katakana].filter(ele => wordType.includes(ele.type))
+  }, [wordType])
+  const createRandomWord = useCallback(() => {
+    const word = renderWordsList[createRandomIndex()]?.value
     setWord(word)
     return word
-  }
+  }, [renderWordsList])
 
-  const createRandomIndex = (): number => {
-    return Math.floor(Math.random() * gojuon.length)
-  }
+  const createRandomIndex = useCallback((): number => {
+    return Math.floor(Math.random() * renderWordsList.length)
+  }, [renderWordsList])
   const inputref = useRef(null)
-  const [word, setWord] = useState<string>(gojuon[createRandomIndex()])
+  const [word, setWord] = useState<string>(renderWordsList[createRandomIndex()]?.value)
   const [form] = Form.useForm()
   const [error, setError] = useState<boolean>(false)
   const [doneList, setDoneList] = useState<{ status: "sucess" | 'error', content: string }[]>([])
@@ -60,6 +91,10 @@ function App() {
     }).slice(0, 10))
   }, [missMap])
 
+  useEffect(() => {
+    createRandomWord()
+  }, [renderWordsList])
+
   return (
     <div className='main'>
       <Form
@@ -94,6 +129,22 @@ function App() {
           justify={'center'}
         >
           <Col
+            flex={'0 0 500px'}
+            span={24}
+          >
+            <Select
+              bordered={false}
+              placeholder="假名范围"
+              options={wordTypeList}
+              onChange={(v) => {setWordType(v)}}
+              style={{
+                width: '220px'
+              }}
+              suffixIcon={<></>}
+              mode="multiple"
+            ></Select>
+          </Col>
+          <Col
             span={24}
             flex={'500px'}
           >
@@ -127,7 +178,10 @@ function App() {
                 rules={[
                   {
                     validator: (_, value: string | undefined) => {
-                      const character = (gojuon_map[word] ?? '').split('/') as string[]
+                      const character = ({ ...katakana_map, ...hiragana_map }[word] ?? '').split('/') as string[]
+                      if(!(value.length > 0)) {
+                        return Promise.reject('请输入罗马字')
+                      }
                       if (character.includes((value ?? '').toLowerCase())) {
                         return Promise.resolve(200)
                       } else {
@@ -189,7 +243,7 @@ function App() {
             </Divider>
             <Row gutter={[4, 6]} justify={'start'}>
               <Col>
-                <Row  gutter={[6, 4]}>
+                <Row gutter={[6, 4]}>
                   {
                     rank.map(ele => <Col>
                       <Tag>
@@ -206,7 +260,7 @@ function App() {
       </Form>
       <div className="score">
         <Row justify={'end'} gutter={[10, 16]}>
-          
+
         </Row>
 
 

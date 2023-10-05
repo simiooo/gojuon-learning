@@ -1,5 +1,6 @@
-export const gojuon = `あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほやゆよらりるれろわをえん`.split('')
-export const gojuon_map = {
+export const hiragana = `あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほやゆよらりるれろわをえん`.split('').map(ele => ({value: ele, type: 'hiragana'}))
+export const katakana = `アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン`.split('').map(ele => ({value: ele, type: 'katakana'}))
+export const hiragana_map = {
   'あ': 'a',
   'い': 'i',
   'う': 'u',
@@ -46,4 +47,54 @@ export const gojuon_map = {
   'わ': 'wa',
   'を': 'wo',
   'ん': 'n',
+} as const
+
+'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'
+export const katakana_map = {
+  'ア': 'a',
+  'イ': 'i',
+  'ウ': 'u',
+  'エ': 'e',
+  'オ': 'o',
+  'カ': 'ka',
+  'キ': 'ki',
+  'ク': 'ku',
+  'ケ': 'ke',
+  'コ': 'ko',
+  'サ': 'sa',
+  'シ': 'si/shi',
+  'ス': 'su',
+  'セ': 'se',
+  'ソ': 'so',
+  'タ': 'ta',
+  'チ': 'ti/chi',
+  'ツ': 'tu/tsu',
+  'テ': 'te',
+  'ト': 'to',
+  'ナ': 'na',
+  'ニ': 'ni',
+  'ヌ': 'nu',
+  'ネ': 'ne',
+  'ノ': 'no',
+  'ハ': 'ha',
+  'ヒ': 'hi',
+  'フ': 'hu/fu',
+  'ヘ': 'he',
+  'ホ': 'ho',
+  'マ': 'ma',
+  'ミ': 'mi',
+  'ム': 'mu',
+  'メ': 'me',
+  'モ': 'mo',
+  'ヤ': 'ya',
+  'ユ': 'yu',
+  'ヨ': 'yo',
+  'ラ': 'ra',
+  'リ': 'ri',
+  'ル': 'ru',
+  'レ': 're',
+  'ロ': 'ro',
+  'ワ': 'wa',
+  'ヲ': 'wo',
+  'ン': 'n',
 } as const
