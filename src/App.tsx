@@ -136,6 +136,7 @@ function App() {
               bordered={false}
               placeholder="假名范围"
               options={wordTypeList}
+              value={wordType}
               onChange={(v) => {setWordType(v)}}
               style={{
                 width: '220px'
