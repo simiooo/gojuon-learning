@@ -13,6 +13,7 @@
     "@ant-design/icons": "^5.2.6",
     "@vercel/analytics": "^1.0.2",
     "antd": "^5.9.4",
+    "pure-rand": "^6.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "vite-plugin-pwa": "^0.16.5"

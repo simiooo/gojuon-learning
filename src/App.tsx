@@ -3,7 +3,11 @@ import './App.css'
 import { Button, Card, Col, Divider, Form, Input, Row, Select, Space, Tag, Tooltip, message } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import { hiragana, hiragana_map, katakana, katakana_map } from './goguon'
+import prand from 'pure-rand'
 
+
+const seed = Date.now() ^ (Math.random() * 0x100000000);
+const rng = prand.xoroshiro128plus(seed);
 
 // const tagRender = (props: TagProps & { label: any, value: any }) => {
 //   const { label, value, closable, onClose } = props;
@@ -47,7 +51,7 @@ function App() {
   }, [renderWordsList])
 
   const createRandomIndex = useCallback((): number => {
-    return Math.floor(Math.random() * renderWordsList.length)
+    return Math.floor(prand.unsafeUniformIntDistribution(0, renderWordsList.length - 1, rng) )
   }, [renderWordsList])
   const inputref = useRef(null)
   const [word, setWord] = useState<string>(renderWordsList[createRandomIndex()]?.value)
