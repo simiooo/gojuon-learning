@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
-import { Button, Card, Col, Divider, Form, Input, Row, Select, Space, Tag, TagProps, Tooltip, message } from 'antd'
+import { Button, Card, Col, Divider, Form, Input, Row, Select, Space, Tag, Tooltip, message } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import { hiragana, hiragana_map, katakana, katakana_map } from './goguon'
 
