@@ -5,24 +5,24 @@ import { CloseOutlined } from '@ant-design/icons'
 import { hiragana, hiragana_map, katakana, katakana_map } from './goguon'
 
 
-const tagRender = (props: TagProps & { label: any, value: any }) => {
-  const { label, value, closable, onClose } = props;
-  const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
-  return (
-    <Tag
-      color={value}
-      onMouseDown={onPreventMouseDown}
-      closable={closable}
-      onClose={onClose}
-      style={{ marginRight: 3 }}
-    >
-      {label}
-    </Tag>
-  );
-};
+// const tagRender = (props: TagProps & { label: any, value: any }) => {
+//   const { label, value, closable, onClose } = props;
+//   const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
+//     event.preventDefault();
+//     event.stopPropagation();
+//   };
+//   return (
+//     <Tag
+//       color={value}
+//       onMouseDown={onPreventMouseDown}
+//       closable={closable}
+//       onClose={onClose}
+//       style={{ marginRight: 3 }}
+//     >
+//       {label}
+//     </Tag>
+//   );
+// };
 
 function App() {
 
