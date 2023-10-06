@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { Button, Card, Col, Divider, Form, Input, Row, Select, Space, Tag, Tooltip, message } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
+import { useResponsive } from 'ahooks';
 import { hiragana, hiragana_map, katakana, katakana_map } from './goguon'
 import prand from 'pure-rand'
 
@@ -82,8 +83,13 @@ function App() {
     setMissMap(new Map(JSON.parse(window.localStorage.getItem('missMap'))) ?? new Map())
   }, [])
 
+  const responsive = useResponsive();
+  const renderFlexBasis = useMemo(() => {
+    return !responsive.md ? '320px' : '500px'
+  }, [responsive])
   const [missMap, setMissMap] = useState<Map<string, number>>(new Map())
   const [rank, setRank] = useState([])
+  
 
   useEffect(() => {
     if (missMap.size > 0) {
@@ -131,10 +137,14 @@ function App() {
         <Row
           gutter={[16, 40]}
           justify={'center'}
+          style={{
+            width: renderFlexBasis
+          }}
         >
           <Col
-            flex={'0 0 500px'}
+            
             span={24}
+            
           >
             <Select
               bordered={false}
@@ -151,7 +161,7 @@ function App() {
           </Col>
           <Col
             span={24}
-            flex={'500px'}
+            
           >
             <Card
               bordered
@@ -242,7 +252,7 @@ function App() {
             </Tooltip>
           </Col>
 
-          <Col flex={'500px'} span={24}>
+          <Col span={24}>
             <Divider orientation="left" plain>
               常错假名
             </Divider>
