@@ -16,17 +16,17 @@ export default defineConfig({
         background_color: '#ffffff',
         icons: [
           {
-            src: '/gojuonIcon2.png',
+            src: '/icon/favicon.png',
             type: 'image/png', 
           },
           {
-            src: '/gojuonIcon2.png',
+            src: '/icon/android-chrome-192x192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/gojuonIcon3.png',
-            sizes: '256x256',
+            src: '/icon/android-chrome-512x512.png',
+            sizes: '512x512',
             type: 'image/png',
           },
         ]
