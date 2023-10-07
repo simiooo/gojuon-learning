@@ -1,4 +1,4 @@
-export const hiragana = `あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほやゆよらりるれろわをえん`.split('').map(ele => ({value: ele, type: 'hiragana'}))
+export const hiragana = `あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまむめもみやゆよらりるれろわをえん`.split('').map(ele => ({value: ele, type: 'hiragana'}))
 export const katakana = `アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン`.split('').map(ele => ({value: ele, type: 'katakana'}))
 export const hiragana_map = {
   'あ': 'a',
