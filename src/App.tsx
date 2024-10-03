@@ -1,33 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
-import { Button, Card, Col, Divider, Form, Input, Row, Select, Space, Tag, Tooltip, message } from 'antd'
+import { Button, Card, Col, Divider, Form, Input, Layout, Row, Select, Space, Tabs, Tag, Tooltip, message } from 'antd'
 import { CloseOutlined } from '@ant-design/icons'
 import { useResponsive } from 'ahooks';
 import { hiragana, hiragana_map, katakana, katakana_map } from './goguon'
 import prand from 'pure-rand'
+import OcrPage from './page/OcrPage';
 
 
 const seed = Date.now() ^ (Math.random() * 0x100000000);
 const rng = prand.xoroshiro128plus(seed);
-
-// const tagRender = (props: TagProps & { label: any, value: any }) => {
-//   const { label, value, closable, onClose } = props;
-//   const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
-//     event.preventDefault();
-//     event.stopPropagation();
-//   };
-//   return (
-//     <Tag
-//       color={value}
-//       onMouseDown={onPreventMouseDown}
-//       closable={closable}
-//       onClose={onClose}
-//       style={{ marginRight: 3 }}
-//     >
-//       {label}
-//     </Tag>
-//   );
-// };
 
 function App() {
 
@@ -52,7 +34,7 @@ function App() {
   }, [renderWordsList])
 
   const createRandomIndex = useCallback((): number => {
-    return Math.floor(prand.unsafeUniformIntDistribution(0, renderWordsList.length - 1, rng) )
+    return Math.floor(prand.unsafeUniformIntDistribution(0, renderWordsList.length - 1, rng))
   }, [renderWordsList])
   const inputref = useRef(null)
   const [word, setWord] = useState<string>(renderWordsList[createRandomIndex()]?.value)
@@ -89,7 +71,7 @@ function App() {
   }, [responsive])
   const [missMap, setMissMap] = useState<Map<string, number>>(new Map())
   const [rank, setRank] = useState([])
-  
+
 
   useEffect(() => {
     if (missMap.size > 0) {
@@ -106,181 +88,206 @@ function App() {
   }, [renderWordsList])
 
   return (
-    <div className='main'>
-      <Form
-        form={form}
-        onFinish={async (v) => {
-          setDoneList([...doneList, {
-            status: 'sucess',
-            content: v?.word
-          }])
-          form.resetFields()
-          createRandomWord()
-          setError(false)
-          setTimeout(() => {
-            inputref.current.focus()
+    <Layout
+    style={{
+      padding: '1rem 2rem'
+    }}
+    >
+      <Tabs
+        items={[
+          {
+            key: '1',
+            label: 'Learning',
+            children: <Layout.Content>
+              <div className='main'>
+                <Form
+                  form={form}
+                  onFinish={async (v) => {
+                    setDoneList([...doneList, {
+                      status: 'sucess',
+                      content: v?.word
+                    }])
+                    form.resetFields()
+                    createRandomWord()
+                    setError(false)
+                    setTimeout(() => {
+                      inputref.current.focus()
 
-          })
-        }}
-        onFinishFailed={(v) => {
-          const cnt = missMap.get(word) ?? 0
-          missMap.set(word, cnt + 1)
-          setMissMap(new Map([...missMap]))
-          setDoneList([...doneList, {
-            status: 'error',
-            content: v?.values?.word
-          }])
-          setError(true)
-          message.error('罗马字不正确')
-        }}
-      >
-        <Row
-          gutter={[16, 40]}
-          justify={'center'}
-          style={{
-            width: renderFlexBasis
-          }}
-        >
-          <Col
-            
-            span={24}
-            
-          >
-            <Select
-              bordered={false}
-              placeholder="假名范围"
-              options={wordTypeList}
-              value={wordType}
-              onChange={(v) => {setWordType(v)}}
-              style={{
-                width: '220px'
-              }}
-              suffixIcon={<></>}
-              mode="multiple"
-            ></Select>
-          </Col>
-          <Col
-            span={24}
-            
-          >
-            <Card
-              bordered
-              title={<h1
-                style={{
-                  textAlign: 'center'
-                }}
-              >
-                <Space><div
-                  style={{
-                    color: error ? 'red' : undefined
+                    })
                   }}
-                >{word}</div>
-                  {error ? <CloseOutlined
+                  onFinishFailed={(v) => {
+                    const cnt = missMap.get(word) ?? 0
+                    missMap.set(word, cnt + 1)
+                    setMissMap(new Map([...missMap]))
+                    setDoneList([...doneList, {
+                      status: 'error',
+                      content: v?.values?.word
+                    }])
+                    setError(true)
+                    message.error('罗马字不正确')
+                  }}
+                >
+                  <Row
+                    gutter={[16, 40]}
+                    justify={'center'}
                     style={{
-                      color: 'red',
-
+                      width: renderFlexBasis
                     }}
-                  /> : undefined}
-                </Space>
-              </h1>}
-            >
-              <Form.Item
-                noStyle
-                name="word"
-                normalize={(v?: string) => {
-                  return (v ?? '').trim()
-                }}
-                rules={[
-                  {
-                    validator: (_, value: string | undefined) => {
-                      const character = ({ ...katakana_map, ...hiragana_map }[word] ?? '').split('/') as string[]
-                      if(!(value.length > 0)) {
-                        return Promise.reject('请输入罗马字')
-                      }
-                      if (character.includes((value ?? '').toLowerCase())) {
-                        return Promise.resolve(200)
-                      } else {
-                        return Promise.reject('读音不正确')
-                      }
-                    }
-                  }
-                ]}
-              >
-                <Input
-                  maxLength={8}
-                  ref={inputref}
-                  placeholder='请输入罗马字'
-                  bordered={false}></Input>
-              </Form.Item>
-            </Card>
-            <Row style={{
-              marginTop: '6px'
-            }} justify={'end'}>
-              <Col>
-                <Space>
-                  <div>{renderPercentScore}</div>
-                  <div>{renderScore}</div>
-                </Space>
-              </Col>
-            </Row>
-          </Col>
-          <Col
-            span={24}
-          >
-            <Tooltip
-              title="输入对应的正确罗马字后可“下一个”"
-            >
-              <Row
-                gutter={[10, 16]}
-                justify={'center'}>
-                <Col>
-
-                  <Form.Item
-                    noStyle
-                    name="submit"
                   >
-                    <Space>
-                      <Button
-                        htmlType='submit'
-                        type={"primary"}
-                      >下一个</Button>
-                    </Space>
+                    <Col
 
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Tooltip>
-          </Col>
+                      span={24}
 
-          <Col span={24}>
-            <Divider orientation="left" plain>
-              常错假名
-            </Divider>
-            <Row gutter={[4, 6]} justify={'start'}>
-              <Col>
-                <Row gutter={[6, 4]}>
-                  {
-                    rank.map(ele => <Col>
-                      <Tag>
-                        {ele[0]}
-                      </Tag>
-                    </Col>)
-                  }
-                </Row>
+                    >
+                      <Select
+                        bordered={false}
+                        placeholder="假名范围"
+                        options={wordTypeList}
+                        value={wordType}
+                        onChange={(v) => { setWordType(v) }}
+                        style={{
+                          width: '220px'
+                        }}
+                        suffixIcon={<></>}
+                        mode="multiple"
+                      ></Select>
+                    </Col>
+                    <Col
+                      span={24}
 
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      </Form>
-      <div className="score">
-        <Row justify={'end'} gutter={[10, 16]}>
+                    >
+                      <Card
+                        bordered
+                        title={<h1
+                          style={{
+                            textAlign: 'center'
+                          }}
+                        >
+                          <Space><div
+                            style={{
+                              color: error ? 'red' : undefined
+                            }}
+                          >{word}</div>
+                            {error ? <CloseOutlined
+                              style={{
+                                color: 'red',
 
-        </Row>
+                              }}
+                            /> : undefined}
+                          </Space>
+                        </h1>}
+                      >
+                        <Form.Item
+                          noStyle
+                          name="word"
+                          normalize={(v?: string) => {
+                            return (v ?? '').trim()
+                          }}
+                          rules={[
+                            {
+                              validator: (_, value: string | undefined) => {
+                                const character = ({ ...katakana_map, ...hiragana_map }[word] ?? '').split('/') as string[]
+                                if (!(value.length > 0)) {
+                                  return Promise.reject('请输入罗马字')
+                                }
+                                if (character.includes((value ?? '').toLowerCase())) {
+                                  return Promise.resolve(200)
+                                } else {
+                                  return Promise.reject('读音不正确')
+                                }
+                              }
+                            }
+                          ]}
+                        >
+                          <Input
+                            maxLength={8}
+                            ref={inputref}
+                            placeholder='请输入罗马字'
+                            bordered={false}></Input>
+                        </Form.Item>
+                      </Card>
+                      <Row style={{
+                        marginTop: '6px'
+                      }} justify={'end'}>
+                        <Col>
+                          <Space>
+                            <div>{renderPercentScore}</div>
+                            <div>{renderScore}</div>
+                          </Space>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col
+                      span={24}
+                    >
+                      <Tooltip
+                        title="输入对应的正确罗马字后可“下一个”"
+                      >
+                        <Row
+                          gutter={[10, 16]}
+                          justify={'center'}>
+                          <Col>
+
+                            <Form.Item
+                              noStyle
+                              name="submit"
+                            >
+                              <Space>
+                                <Button
+                                  htmlType='submit'
+                                  type={"primary"}
+                                >下一个</Button>
+                              </Space>
+
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Tooltip>
+                    </Col>
+
+                    <Col span={24}>
+                      <Divider orientation="left" plain>
+                        常错假名
+                      </Divider>
+                      <Row gutter={[4, 6]} justify={'start'}>
+                        <Col>
+                          <Row gutter={[6, 4]}>
+                            {
+                              rank.map(ele => <Col>
+                                <Tag>
+                                  {ele[0]}
+                                </Tag>
+                              </Col>)
+                            }
+                          </Row>
+
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                </Form>
+                <div className="score">
+                  <Row justify={'end'} gutter={[10, 16]}>
+
+                  </Row>
 
 
-      </div>
-    </div>
+                </div>
+              </div>
+            </Layout.Content>,
+
+          },
+          {
+            label: 'Image To Text',
+            key: '2',
+            children: <OcrPage />,
+          }
+        ]}
+      >
+
+      </Tabs>
+
+    </Layout>
   )
 }
 

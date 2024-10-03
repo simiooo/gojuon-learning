@@ -13,10 +13,12 @@
     "@ant-design/icons": "^5.2.6",
     "@vercel/analytics": "^1.0.2",
     "ahooks": "^3.7.8",
-    "antd": "^5.9.4",
+    "antd": "^5.21.2",
+    "fast-xml-parser": "^4.5.0",
     "pure-rand": "^6.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "tesseract.js": "^5.1.1",
     "vite-plugin-pwa": "^0.16.5"
   },
   "devDependencies": {

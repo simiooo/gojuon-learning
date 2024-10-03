@@ -1,0 +1,16 @@
+.ocrPage{
+    
+    height: calc(100vh - 64px - 2rem);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    ::-webkit-scrollbar{
+        display: none;
+        width: 6px;
+    }
+    .content{
+        width: 100%;
+        height: 90%;
+    }
+}
