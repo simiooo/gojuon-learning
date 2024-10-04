@@ -4,6 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import { inject } from '@vercel/analytics';
 import { ConfigProvider } from 'antd'
+import { primaryColor } from './someVar.ts';
 
 inject();
 
@@ -12,7 +13,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: '#80aa51',
+          colorPrimary: primaryColor,
           
         }
       }}
