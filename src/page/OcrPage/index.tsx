@@ -1,9 +1,13 @@
 import { InboxOutlined, TranslationOutlined } from '@ant-design/icons'
-import { Button, Card, Col, Divider, Form, Image, message, Result, Row, Select, Slider, Space, Spin, Upload } from 'antd'
+import { Button, Card, Col, Divider, Form, Image, Input, message, Modal, Result, Row, Select, Slider, Space, Spin, Upload } from 'antd'
 import { createWorker, Lang, PSM } from 'tesseract.js';
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styles from './index.module.css'
-import { useRequest, useSize } from 'ahooks';
+import { useLocalStorageState, useRequest, useSize } from 'ahooks';
+import { HfInference } from '@huggingface/inference';
+import { pipeline } from '@xenova/transformers';
+
+
 // import { XMLParser } from 'fast-xml-parser';
 const luangesList = [
   {
@@ -92,9 +96,10 @@ const PSMOptions = [
     "value": PSM.RAW_LINE
   }
 ]
-async function engineWorker(langs?: Lang[], oem: 0 /* legacy */ | 1 /** LSTM/neural network */ = 1, image?: File, options?: { 
+async function engineWorker(langs?: Lang[], oem: 0 /* legacy */ | 1 /** LSTM/neural network */ = 1, image?: File, options?: {
   psm?: PSM,
-  logger: (arg: Tesseract.LoggerMessage) => void }) {
+  logger: (arg: Tesseract.LoggerMessage) => void
+}) {
   if (!langs) {
     throw Error('Please select Language')
   }
@@ -104,6 +109,7 @@ async function engineWorker(langs?: Lang[], oem: 0 /* legacy */ | 1 /** LSTM/neu
   if (!image) {
     throw Error('Please select image')
   }
+
   worker = (worker && (await worker.reinitialize(langs, oem), worker)) || await createWorker(langs, oem, {
     logger: options?.logger,
   });
@@ -111,8 +117,6 @@ async function engineWorker(langs?: Lang[], oem: 0 /* legacy */ | 1 /** LSTM/neu
     tessedit_pageseg_mode: options?.psm,
   });
   const { data } = await worker.recognize(image, {
-    // rectangle: { top: 0, left: 0, width: 100, height: 100 },
-
   }, {
     hocr: true
   });
@@ -173,11 +177,55 @@ export default function OcrPage() {
   const [form] = Form.useForm()
   const [regPercent, setRegPercent] = useState<number>(0)
   const [cacheImage, setCacheImage] = useState<string>()
+  const [modal, modalContext] = Modal.useModal()
+  const [huggingToken, setHugginToken] = useLocalStorageState<string>('hugginToken')
+  const [hugginForm] = Form.useForm()
+
   const textRef = useRef<HTMLDivElement>()
+  // useEffect(() => {
+  //   // if (!(huggingToken?.length > 0)) {
+  //     modal.confirm({
+  //       title: 'Please input hugging token',
+  //       content: <Form
+  //         form={hugginForm}
+  //       >
+  //         <Form.Item label="Token" name="token">
+  //           <Input
+  //           value={huggingToken}
+  //           onChange={(v) => setHugginToken(v?.target?.value)}
+  //           ></Input>
+  //         </Form.Item>
+  //       </Form>
+  //     }).then((data) => {
+  //       setHugginToken(huggingToken)
+  //     }, () => {})
+  //   // }
+  // }, [])
+
+  async function extractTextFromImage(imageFile: File) {
+    const hf = new HfInference('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');
+    // const result = await hf.imageToText({
+    //   model: 'stepfun-ai/GOT-OCR2_0', // 使用的模型
+    //   data: imageFile, // 传入图像文件
+    // });
+
+    const result = await hf.imageToText({
+      model: 'jinhybr/OCR-Donut-CORD',
+      data: imageFile,
+      
+    });
+  
+    return result;
+  }
+
   const { runAsync, loading, data } = useRequest(async (v) => {
     try {
       setRegPercent(0)
       const file = v?.["file"]?.['file']?.response?.data
+      // console.log(file)
+      // const testresult = await extractTextFromImage(file)
+      // console.log(testresult);
+      
       const result = await engineWorker(v["language"], Math.round(Number(v["quality"] ?? 1)) as 0 | 1, file as File | undefined, {
         logger: (msg) => {
           setRegPercent(msg.progress * 100)
@@ -204,6 +252,7 @@ export default function OcrPage() {
     <div
       className={styles.ocrPage}
     >
+      {modalContext}
       <Form
         form={form}
         onValuesChange={(v) => {
@@ -269,20 +318,20 @@ export default function OcrPage() {
 
               </Col>
               <Form.Item
-              label="Page Segement Mode"
-              name="psm"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please select page segement mode',
-                }
-              ]}
+                label="Page Segement Mode"
+                name="psm"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please select page segement mode',
+                  }
+                ]}
               >
                 <Select
-                style={{
-                  minWidth: '16rem'
-                }}
-                options={PSMOptions}
+                  style={{
+                    minWidth: '16rem'
+                  }}
+                  options={PSMOptions}
                 ></Select>
               </Form.Item>
               <Col>
@@ -387,9 +436,9 @@ export default function OcrPage() {
                       width: textContainerSize?.width
                     }}
                     cover={true}>
-                      {!data && <Result status={'info'}>
-                        <p>Waiting task to start</p>
-                      </Result>}
+                    {!data && <Result status={'info'}>
+                      <p>Waiting task to start</p>
+                    </Result>}
                     <div
                       ref={textRef}
                     ></div>

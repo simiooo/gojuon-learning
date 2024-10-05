@@ -3,10 +3,15 @@ import react from '@vitejs/plugin-react-swc'
 import { VitePWA } from 'vite-plugin-pwa'
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      "/api" : "http://localhost:3000"
+    }
+  },
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // registerType: 'autoUpdate',
       manifest: {
         name: 'Gojuon',
         short_name: 'Gojuon',

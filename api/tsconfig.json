@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  },
+  
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "include": [
+    "./"
+  ],
+  "ts-node": {
+    "esm": true
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

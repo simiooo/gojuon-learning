@@ -4,8 +4,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { hiragana, hiragana_map, katakana, katakana_map } from '../../goguon'
 import { CloseOutlined } from '@ant-design/icons'
 import prand from 'pure-rand'
-const seed = Date.now() ^ (Math.random() * 0x100000000);
-const rng = prand.xoroshiro128plus(seed);
+ const seed = Date.now() ^ (Math.random() * 0x100000000);
+ const rng = prand.xoroshiro128plus(seed);
 export default function KanaLearning() {
 
     const wordTypeList = [

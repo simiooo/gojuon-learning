@@ -7,6 +7,7 @@ import { hiragana, hiragana_map, katakana, katakana_map } from './goguon'
 import prand from 'pure-rand'
 import OcrPage from './page/OcrPage';
 import KanaLearning from './page/KanaLearning';
+import Vocabulary from './page/Vocabulary';
 
 
 
@@ -31,7 +32,12 @@ function App() {
             label: 'Image To Text',
             key: '2',
             children: <OcrPage />,
-          }
+          },
+          {
+            label: 'Vocabulary',
+            key: '3',
+            children: <Vocabulary />,
+          },
         ]}
       >
 
