@@ -20,11 +20,11 @@ jobs:
 
       # 构建 Docker 镜像
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/my-app:latest .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/gujuon-learning-app:latest .
 
       # 推送 Docker 镜像到 Docker Hub
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/my-app:latest
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/gujuon-learning-app:latest
 
       # 使用 GitHub Secrets 中的 SSH 密钥通过 SSH 执行命令
       - name: Deploy to server via SSH
@@ -35,6 +35,6 @@ jobs:
           key: ${{ secrets.SERVER_SECRET }}    # SSH 私钥
           port: ${{ secrets.SERVER_SSH_PORT }}  # SSH 端口，默认是22
           script: |
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/my-app:latest
-            cd /path/to/docker-compose-directory  # 替换为docker-compose所在的目录
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/gujuon-learning-app:latest
+            cd /home/simooo/mongodb  # 替换为docker-compose所在的目录
             docker compose restart
