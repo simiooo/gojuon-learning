@@ -1,6 +1,6 @@
 import { useLocalStorageState, useRequest } from 'ahooks'
 import { Avatar, Button, Card, Col, Descriptions, Divider, List, message, Modal, Row, Skeleton, Space, Tag } from 'antd'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import axios from 'axios'
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -42,11 +42,11 @@ export default function Vocabulary() {
         // manual: true,
     })
 
-    const changeWord = () => {
+    const changeWord = useCallback(() => {
+        console.log(data?.list?.length)
         const result = Math.floor(prand.unsafeUniformIntDistribution(0, (data?.list?.length ?? 1) - 1, rng))
         setCurrentRememberIndex(result)
-
-    }
+    }, [data]) 
 
 
     return (
