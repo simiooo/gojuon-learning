@@ -26,7 +26,7 @@ export default function Vocabulary() {
     const { data, runAsync } = useRequest(async () => {
         try {
             const res = await axios.post<{ data?: Word[], total: number }>('/api/v1/vocabulary', {
-                pageSize: 50,
+                pageSize: 40,
                 current: 1,
             })
             const result: { total: number, list: Word[] } = { total: res?.data?.total ?? 0, list: [...(data?.list ?? []), ...(res.data.data ?? [])] }
@@ -54,6 +54,7 @@ export default function Vocabulary() {
             style={{
                 height: 'calc(100vh - 62px - 2rem)',
                 overflowY: 'auto',
+                overflowX: 'hidden',
             }}
         >
             <Row
@@ -61,15 +62,15 @@ export default function Vocabulary() {
             >
                 {/* {modalHolder} */}
                 <Modal
-                    title="Remeber"
-                    width={'80vw'}
-                    height={'80vh'}
+                    title="To Remeber"
+                    // width={'80vw'}
+                    // height={'80vh'}
                     footer={null}
                     open={rememberModal}
                     onCancel={() => setRememberModal(false)}
                 >
                     <Card
-                        title={cacheData[currentRememberIndex]?.word}
+                        title={<h2>{cacheData[currentRememberIndex]?.word}</h2>}
                     >
                         <Row
                         gutter={[16, 24]}
@@ -111,6 +112,9 @@ export default function Vocabulary() {
                                         danger
                                         type="link"
                                     >Nope</Button>
+                                    <Divider
+                                    type="vertical"
+                                    ></Divider>
                                     <Button
                                         onClick={() => {
                                             setRemHiddren(!remHiddren)
@@ -143,7 +147,8 @@ export default function Vocabulary() {
                         loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
                         endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
                         scrollableTarget="scrollableDiv"
-                    // height={400}
+                    // height={'calc(100% - 64px)'}
+                        height={'80vh'}
                     >
                         <List
                             grid={{

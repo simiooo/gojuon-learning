@@ -4,8 +4,8 @@ import { createWorker, Lang, PSM } from 'tesseract.js';
 import React, { useEffect, useRef, useState } from 'react'
 import styles from './index.module.css'
 import { useLocalStorageState, useRequest, useSize } from 'ahooks';
-import { HfInference } from '@huggingface/inference';
-import { pipeline } from '@xenova/transformers';
+// import { HfInference } from '@huggingface/inference';
+// import { pipeline } from '@xenova/transformers';
 
 
 // import { XMLParser } from 'fast-xml-parser';
@@ -203,19 +203,19 @@ export default function OcrPage() {
   // }, [])
 
   async function extractTextFromImage(imageFile: File) {
-    const hf = new HfInference('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');
+    // const hf = new HfInference('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');
     // const result = await hf.imageToText({
     //   model: 'stepfun-ai/GOT-OCR2_0', // 使用的模型
     //   data: imageFile, // 传入图像文件
     // });
 
-    const result = await hf.imageToText({
-      model: 'jinhybr/OCR-Donut-CORD',
-      data: imageFile,
+    // const result = await hf.imageToText({
+    //   model: 'jinhybr/OCR-Donut-CORD',
+    //   data: imageFile,
       
-    });
+    // });
   
-    return result;
+    // return result;
   }
 
   const { runAsync, loading, data } = useRequest(async (v) => {

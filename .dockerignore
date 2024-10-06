@@ -1,0 +1,10 @@
+# 忽略 .git 目录
+.git
+# 忽略 node_modules，因为会在镜像内重新安装
+node_modules
+# 忽略本地依赖的缓存文件
+.pnpm-store
+# 其他你不想复制到 Docker 镜像的文件和目录
+
+dist/**/*
+api/dist/**/*
