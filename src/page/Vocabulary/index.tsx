@@ -6,7 +6,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 import prand from 'pure-rand';
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
-
+const PAGE_SIZE = 200
 const seed = Date.now() ^ (Math.random() * 0x100000000);
 const rng = prand.xoroshiro128plus(seed);
 type Word = {
@@ -26,7 +26,7 @@ export default function Vocabulary() {
     const { data, runAsync } = useRequest(async (current: number = 1) => {
         try {
             const res = await axios.post<{ data?: Word[], total: number }>('/api/v1/vocabulary', {
-                pageSize: 40,
+                pageSize: PAGE_SIZE,
                 current,
             })
             const result: { total: number, list: Word[], current?: number } = {
