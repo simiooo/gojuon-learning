@@ -23,13 +23,17 @@ export default function Vocabulary() {
     const [remHiddren ,setRemHiddren] = useState<boolean>(true)
     const [currentRememberIndex, setCurrentRememberIndex] = useState(0)
 
-    const { data, runAsync } = useRequest(async () => {
+    const { data, runAsync } = useRequest(async (current: number = 1) => {
         try {
             const res = await axios.post<{ data?: Word[], total: number }>('/api/v1/vocabulary', {
                 pageSize: 40,
-                current: 1,
+                current,
             })
-            const result: { total: number, list: Word[] } = { total: res?.data?.total ?? 0, list: [...(data?.list ?? []), ...(res.data.data ?? [])] }
+            const result: { total: number, list: Word[], current?: number } = { 
+                total: res?.data?.total ?? 0, 
+                list: [...(data?.list ?? []), ...(res.data.data ?? [])],
+                current
+            }
             return result
         } catch (error) {
             console.log(error);
@@ -142,7 +146,7 @@ export default function Vocabulary() {
                 <Col span={24}>
                     <InfiniteScroll
                         dataLength={data?.list?.length ?? 0}
-                        next={() => runAsync()}
+                        next={() => runAsync((data?.current ?? 0) + 1)}
                         hasMore={(data?.list?.length ?? 0) < data?.total}
                         loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
                         endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
