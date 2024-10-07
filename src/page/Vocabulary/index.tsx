@@ -1,6 +1,6 @@
 import { useEventEmitter, useEventListener, useKeyPress, useLocalStorageState, useRequest } from 'ahooks'
 import { Avatar, Button, Card, Col, Descriptions, Divider, Input, List, message, Modal, Row, Skeleton, Space, Tag } from 'antd'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import axios from 'axios'
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -47,14 +47,18 @@ export default function Vocabulary() {
     })
 
     const changeWord = useCallback(() => {
-        console.log(data?.list?.length)
         const result = Math.floor(prand.unsafeUniformIntDistribution(0, (data?.list?.length ?? 1) - 1, rng))
+        console.log(result, "<---- word index")
         setCurrentRememberIndex(result)
     }, [data])
 
     useKeyPress('alt.d', () => {
         setRemHiddren(!remHiddren)
     })
+
+    const renderCurrentRemember = useMemo(() => {
+        return cacheData[currentRememberIndex]
+    }, [cacheData, currentRememberIndex])
 
     return (
         <div
@@ -70,7 +74,7 @@ export default function Vocabulary() {
                 {/* {modalHolder} */}
                 <Modal
                     title={<Space>
-                        <h5>To Remeber</h5>
+                        <h5>To Remember</h5>
                         <span>{Object.keys(remembered ?? {}).length} remembered</span>
                     </Space>}
                     // width={'80vw'}
@@ -80,24 +84,23 @@ export default function Vocabulary() {
                     onCancel={() => setRememberModal(false)}
                 >
                     <Card
-                        title={<h2>{cacheData[currentRememberIndex]?.word}</h2>}
+                        title={<h2>{renderCurrentRemember?.word}</h2>}
                     >
                         <Row
                             gutter={[16, 24]}
                         >
                             <Col span={24}>
-                                <h3>Definition:</h3>
                                 <Row
                                 gutter={[16, 6]}
                                 >
                                     <Col span={24}>
-                                        <Space>Kana: {remHiddren ? '****' : cacheData[currentRememberIndex]?.kana}</Space>
+                                        <Space>Kana: {remHiddren ? '****' : renderCurrentRemember?.kana}</Space>
                                     </Col>
                                     <Col span={24}>
-                                        <Space>Chinese Meaning: {remHiddren ? '****' : cacheData[currentRememberIndex]?.chineseMeaning?.join('；')}</Space>
+                                        <Space>Chinese Meaning: {remHiddren ? '****' : renderCurrentRemember?.chineseMeaning?.join('；')}</Space>
                                     </Col>
                                     <Col span={24}>
-                                        <Space>Word Class: {remHiddren ? '****' : cacheData[currentRememberIndex]?.wordClass}</Space>
+                                        <Space>Word Class: {remHiddren ? '****' : renderCurrentRemember?.wordClass}</Space>
                                     </Col>
                                 </Row>
                             </Col>
@@ -108,7 +111,7 @@ export default function Vocabulary() {
                                 <Space>
                                     <Button
                                         onClick={() => {
-                                            setRemembered({ ...remembered, [JSON.stringify(cacheData?.[currentRememberIndex] ?? {})]: true })
+                                            setRemembered({ ...remembered, [JSON.stringify(renderCurrentRemember ?? {})]: true })
                                             changeWord()
                                         }}
                                         type="link"
