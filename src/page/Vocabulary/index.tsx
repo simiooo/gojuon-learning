@@ -25,20 +25,22 @@ export default function Vocabulary() {
 
     const audioRef = useRef<HTMLAudioElement>()
 
-    const {data: ttsData, runAsync: ttsGetter, loading: ttsLoading} = useRequest(async (text?: string) => {
-        if(!text) {
+    const { data: ttsData, runAsync: ttsGetter, loading: ttsLoading } = useRequest(async (text?: string) => {
+        if (!text) {
             throw Error('Please choose text to submit')
         }
-        
-        const res = await axios.post('/api/tts', {
-            text: text,
+
+        const res = await axios.post('http://192.168.31.172:5500/api/tts', {
             cache: false,
+            text,
+        }, {
+            responseType: 'arraybuffer'
         })
-        // if(!!ttsData) {
-        //     URL.revokeObjectURL(ttsData)
-        // }
+        if (!!ttsData) {
+            URL.revokeObjectURL(ttsData)
+        }
         // console.log(res?.data)
-        const url = URL.createObjectURL(new Blob([res?.data] , {type: "audio/wav",}))
+        const url = URL.createObjectURL(new Blob([res?.data], { type: "audio/wav", }))
         const audio = new Audio(url)
         audio.play()
         return url
@@ -70,7 +72,7 @@ export default function Vocabulary() {
 
     }, {
         onSuccess() {
-            
+
         },
         // manual: true,
     })
@@ -103,10 +105,10 @@ export default function Vocabulary() {
                 overflowX: 'hidden',
             }}
         >
-            <audio 
-            ref={audioRef}
-            style={{display: 'none'}}
-            
+            <audio
+                ref={audioRef}
+                style={{ display: 'none' }}
+
             ></audio>
             <Row
                 gutter={[16, 16]}
@@ -126,15 +128,15 @@ export default function Vocabulary() {
                     <Card
                         title={<Space>
                             <h2>{renderCurrentRemember?.word}</h2>
-                            
-                            <Button 
-                            icon={<NotificationOutlined />}
-                            loading={ttsLoading}
-                            onClick={() => {
-                                ttsGetter(renderCurrentRemember?.word)
-                            }}
-                            type="text"></Button>
-                        </Space> }
+
+                            <Button
+                                icon={<NotificationOutlined />}
+                                loading={ttsLoading}
+                                onClick={() => {
+                                    ttsGetter(renderCurrentRemember?.kana)
+                                }}
+                                type="text"></Button>
+                        </Space>}
                     >
                         <Row
                             gutter={[16, 24]}
@@ -156,7 +158,7 @@ export default function Vocabulary() {
                             </Col>
                             <Col span={24}>
                                 <Input.TextArea
-                                placeholder='Just exercise area, no more feature here.'
+                                    placeholder='Just exercise area, no more feature here.'
                                 ></Input.TextArea>
                             </Col>
                             <Col span={24}>
@@ -240,19 +242,19 @@ export default function Vocabulary() {
                                         >
                                             <Col span={24}>Word Class: {item.wordClass}</Col>
                                             <Col span={24}>
-                                            <Space
-                                                wrap={true}
-                                                size={'small'}
-                                            >
-                                                {item.chineseMeaning?.map(word => {
-                                                    return <Tag
-                                                        key={word}
-                                                        title={word}
-                                                        color="blue"
-                                                    >{word}</Tag>
-                                                })}
+                                                <Space
+                                                    wrap={true}
+                                                    size={'small'}
+                                                >
+                                                    {item.chineseMeaning?.map(word => {
+                                                        return <Tag
+                                                            key={word}
+                                                            title={word}
+                                                            color="blue"
+                                                        >{word}</Tag>
+                                                    })}
 
-                                            </Space></Col>
+                                                </Space></Col>
                                         </Row>} />
 
                                     </Card>
