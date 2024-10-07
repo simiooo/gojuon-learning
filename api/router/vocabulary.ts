@@ -60,7 +60,10 @@ export const getTTSVoice: RouteOptions = {
     handler: async (request, reply) => {
         const payload = request.body as {voice?: string, text?: string, cache?: boolean} ?? {}
         const res = await axios.get("http://openTTS:5500/api/tts", {
-            params: payload,
+            params: {
+                ...payload,
+                voice:'coqui-tts:ja_kokoro'
+            },
         })
         reply.type('audio/wav')
         return res?.data

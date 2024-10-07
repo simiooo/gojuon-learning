@@ -31,7 +31,6 @@ export default function Vocabulary() {
         }
         
         const res = await axios.post('/api/tts', {
-            voice: 'coqui-tts:ja',
             text: text,
             cache: false,
         })
