@@ -5,7 +5,7 @@ import axios from 'axios'
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import prand from 'pure-rand';
-import { AudioMutedOutlined, AudioOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import { AudioMutedOutlined, AudioOutlined, EyeInvisibleOutlined, EyeOutlined, NotificationOutlined } from '@ant-design/icons';
 const PAGE_SIZE = 200
 const seed = Date.now() ^ (Math.random() * 0x100000000);
 const rng = prand.xoroshiro128plus(seed);
@@ -125,7 +125,7 @@ export default function Vocabulary() {
                             <h2>{renderCurrentRemember?.word}</h2>
                             
                             <Button 
-                            icon={<AudioMutedOutlined />}
+                            icon={<NotificationOutlined />}
                             loading={ttsLoading}
                             onClick={() => {
                                 ttsGetter(renderCurrentRemember?.word)
