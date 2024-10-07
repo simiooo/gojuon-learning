@@ -55,10 +55,10 @@ export const getTTSVoice: RouteOptions = {
     method: 'POST',
     url: '/api/tts',
     schema: {
-        querystring: getTTSVoiceQueryStringSchema,
+        body: getTTSVoiceQueryStringSchema,
     },
     handler: async (request, reply) => {
-        const payload = request.query as {voice?: string, text?: string, cache?: boolean} ?? {}
+        const payload = request.body as {voice?: string, text?: string, cache?: boolean} ?? {}
         const res = await axios.get("http://openTTS/api/tts", {
             params: payload,
         })
