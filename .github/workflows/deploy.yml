@@ -35,6 +35,8 @@ jobs:
           key: ${{ secrets.SERVER_SECRET }}    # SSH 私钥
           port: ${{ secrets.SERVER_SSH_PORT }}  # SSH 端口，默认是22
           script: |
+            # 列出所有名为 simooowann/gujuon-learning-app 的镜像，并删除
+            docker images -q simooowann/gujuon-learning-app | xargs docker rmi -f
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/gujuon-learning-app:latest
             cd /home/simooo/mongodb  # 替换为docker-compose所在的目录
             docker compose down
