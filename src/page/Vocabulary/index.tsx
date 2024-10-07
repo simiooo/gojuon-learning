@@ -69,7 +69,10 @@ export default function Vocabulary() {
             >
                 {/* {modalHolder} */}
                 <Modal
-                    title="To Remeber"
+                    title={<Space>
+                        <h5>To Remeber</h5>
+                        <span>{Object.keys(remembered ?? {}).length} remembered</span>
+                        </Space>  }
                     // width={'80vw'}
                     // height={'80vh'}
                     footer={null}
