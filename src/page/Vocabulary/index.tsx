@@ -1,5 +1,5 @@
-import { useLocalStorageState, useRequest } from 'ahooks'
-import { Avatar, Button, Card, Col, Descriptions, Divider, List, message, Modal, Row, Skeleton, Space, Tag } from 'antd'
+import { useEventEmitter, useEventListener, useKeyPress, useLocalStorageState, useRequest } from 'ahooks'
+import { Avatar, Button, Card, Col, Descriptions, Divider, Input, List, message, Modal, Row, Skeleton, Space, Tag } from 'antd'
 import React, { useCallback, useState } from 'react'
 import axios from 'axios'
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -20,7 +20,7 @@ export default function Vocabulary() {
     // const [modal, modalHolder] = Modal.useModal()
     const [cacheData, setCacheData] = useLocalStorageState<Word[]>("vocabulary", { defaultValue: [] })
     const [remembered, setRemembered] = useLocalStorageState<{ [key: string]: boolean }>('remembered', { defaultValue: {} })
-    const [remHiddren ,setRemHiddren] = useState<boolean>(true)
+    const [remHiddren, setRemHiddren] = useState<boolean>(true)
     const [currentRememberIndex, setCurrentRememberIndex] = useState(0)
 
     const { data, runAsync } = useRequest(async (current: number = 1) => {
@@ -29,8 +29,8 @@ export default function Vocabulary() {
                 pageSize: 40,
                 current,
             })
-            const result: { total: number, list: Word[], current?: number } = { 
-                total: res?.data?.total ?? 0, 
+            const result: { total: number, list: Word[], current?: number } = {
+                total: res?.data?.total ?? 0,
                 list: [...(data?.list ?? []), ...(res.data.data ?? [])],
                 current
             }
@@ -50,8 +50,11 @@ export default function Vocabulary() {
         console.log(data?.list?.length)
         const result = Math.floor(prand.unsafeUniformIntDistribution(0, (data?.list?.length ?? 1) - 1, rng))
         setCurrentRememberIndex(result)
-    }, [data]) 
+    }, [data])
 
+    useKeyPress('alt.d', () => {
+        setRemHiddren(!remHiddren)
+    })
 
     return (
         <div
@@ -77,28 +80,31 @@ export default function Vocabulary() {
                         title={<h2>{cacheData[currentRememberIndex]?.word}</h2>}
                     >
                         <Row
-                        gutter={[16, 24]}
+                            gutter={[16, 24]}
                         >
                             <Col span={24}>
-                            <Descriptions 
-                            items={[
-                                {
-                                    label: 'Kana',
-                                    children: remHiddren ? '****' : cacheData[currentRememberIndex]?.kana,
-                                    span: 24,
-                                },
-                                {
-                                    label: 'Chinese Meaning',
-                                    children: remHiddren ? '****' : cacheData[currentRememberIndex]?.chineseMeaning?.join('；'),
-                                    span: 24,
-                                },
-                                {
-                                    label: 'Word Class',
-                                    children: remHiddren ? '****' : cacheData[currentRememberIndex]?.wordClass,
-                                    span: 24,
-                                },
-                            ]}
-                            />
+                                <Descriptions
+                                    items={[
+                                        {
+                                            label: 'Kana',
+                                            children: remHiddren ? '****' : cacheData[currentRememberIndex]?.kana,
+                                            span: 24,
+                                        },
+                                        {
+                                            label: 'Chinese Meaning',
+                                            children: remHiddren ? '****' : cacheData[currentRememberIndex]?.chineseMeaning?.join('；'),
+                                            span: 24,
+                                        },
+                                        {
+                                            label: 'Word Class',
+                                            children: remHiddren ? '****' : cacheData[currentRememberIndex]?.wordClass,
+                                            span: 24,
+                                        },
+                                    ]}
+                                />
+                            </Col>
+                            <Col span={24}>
+                                <Input.TextArea></Input.TextArea>
                             </Col>
                             <Col span={24}>
                                 <Space>
@@ -117,7 +123,7 @@ export default function Vocabulary() {
                                         type="link"
                                     >Nope</Button>
                                     <Divider
-                                    type="vertical"
+                                        type="vertical"
                                     ></Divider>
                                     <Button
                                         onClick={() => {
@@ -151,7 +157,7 @@ export default function Vocabulary() {
                         loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
                         endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
                         scrollableTarget="scrollableDiv"
-                    // height={'calc(100% - 64px)'}
+                        // height={'calc(100% - 64px)'}
                         height={'80vh'}
                     >
                         <List
