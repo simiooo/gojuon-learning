@@ -10,7 +10,7 @@ const getVocabularyBodyJsonSchema = S.object()
     .prop('kanji', S.string())
 
 const getTTSVoiceQueryStringSchema = S.object()
-.prop('voice', S.string().required())
+// .prop('voice', S.string().required())
 .prop('text', S.string().required())
 .prop('cache', S.boolean())
 
