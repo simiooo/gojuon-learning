@@ -37,4 +37,5 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/gujuon-learning-app:latest
             cd /home/simooo/mongodb  # 替换为docker-compose所在的目录
-            docker compose restart
+            docker compose down
+            docker compose up -d
