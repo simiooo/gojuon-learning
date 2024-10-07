@@ -34,6 +34,7 @@ export default function Vocabulary() {
                 list: [...(data?.list ?? []), ...(res.data.data ?? [])],
                 current
             }
+            setCacheData(result?.list ?? [])
             return result
         } catch (error) {
             console.log(error);
@@ -41,7 +42,7 @@ export default function Vocabulary() {
 
     }, {
         onSuccess() {
-            setCacheData(data?.list ?? [])
+            
         },
         // manual: true,
     })
@@ -55,7 +56,13 @@ export default function Vocabulary() {
     useKeyPress('alt.d', () => {
         setRemHiddren(!remHiddren)
     })
-
+    useKeyPress('alt.w', () => {
+        setRemembered({ ...remembered, [JSON.stringify(renderCurrentRemember ?? {})]: true })
+        changeWord()
+    })
+    useKeyPress('alt.q', () => {
+        changeWord()
+    })
     const renderCurrentRemember = useMemo(() => {
         return cacheData[currentRememberIndex]
     }, [cacheData, currentRememberIndex])
@@ -91,7 +98,7 @@ export default function Vocabulary() {
                         >
                             <Col span={24}>
                                 <Row
-                                gutter={[16, 6]}
+                                    gutter={[16, 6]}
                                 >
                                     <Col span={24}>
                                         <Space>Kana: {remHiddren ? '****' : renderCurrentRemember?.kana}</Space>
