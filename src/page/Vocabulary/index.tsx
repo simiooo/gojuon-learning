@@ -118,7 +118,7 @@ export default function Vocabulary() {
     useKeyPress('alt.q', () => {
         unrememberFn()
     })
-    useKeyPress('alt.e', () => {
+    useKeyPress('alt.r', () => {
         ttsGetter(renderCurrentRemember?.kana)
     })
     
@@ -151,7 +151,7 @@ export default function Vocabulary() {
                         title={<Space>
                             <h2>{renderCurrentRemember?.word}</h2>
                             <Tooltip
-                                title={'Shortcuts: alt + e'}
+                                title={'Shortcuts: alt + r'}
                             >
                                 <Button
                                     icon={<NotificationOutlined />}
