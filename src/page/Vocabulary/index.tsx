@@ -112,7 +112,9 @@ export default function Vocabulary() {
                                 </Row>
                             </Col>
                             <Col span={24}>
-                                <Input.TextArea></Input.TextArea>
+                                <Input.TextArea
+                                placeholder='Just exercise area, no more feature here.'
+                                ></Input.TextArea>
                             </Col>
                             <Col span={24}>
                                 <Space>
@@ -194,11 +196,14 @@ export default function Vocabulary() {
                                             gutter={8}
                                         >
                                             <Col span={24}>Word Class: {item.wordClass}</Col>
-                                            <Col span={24}><Space
+                                            <Col span={24}>
+                                            <Space
                                                 wrap={true}
+                                                size={'small'}
                                             >
                                                 {item.chineseMeaning?.map(word => {
                                                     return <Tag
+                                                        key={word}
                                                         title={word}
                                                         color="blue"
                                                     >{word}</Tag>
