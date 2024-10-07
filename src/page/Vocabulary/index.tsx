@@ -30,7 +30,7 @@ export default function Vocabulary() {
             throw Error('Please choose text to submit')
         }
 
-        const res = await axios.post('http://192.168.31.172:5500/api/tts', {
+        const res = await axios.post('/api/tts', {
             cache: false,
             text,
         }, {
