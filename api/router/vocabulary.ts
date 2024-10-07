@@ -1,6 +1,6 @@
 import { RouteOptions } from 'fastify'
 import {S} from 'fluent-json-schema'
-
+import axios from 'axios'
 
 
 const getVocabularyBodyJsonSchema = S.object()
@@ -8,6 +8,11 @@ const getVocabularyBodyJsonSchema = S.object()
     .prop('current', S.number().maximum(0x07fffffff).minimum(1).required())
     .prop('kana', S.string())
     .prop('kanji', S.string())
+
+const getTTSVoiceQueryStringSchema = S.object()
+.prop('voice', S.string().required())
+.prop('text', S.string().required())
+.prop('cache', S.boolean())
 
 export const getVocabulary: RouteOptions = {
     method: 'POST',
@@ -44,4 +49,20 @@ export const getVocabulary: RouteOptions = {
         const result = await cursor?.toArray()
         return { status: 200, data: result ?? [], current: payload.current, pageSize: payload.pageSize, total: await request.server.mongo.db?.collection('minano_nihonngo').countDocuments()}
     },
+}
+
+export const getTTSVoice: RouteOptions = {
+    method: 'POST',
+    url: '/api/tts',
+    schema: {
+        querystring: getTTSVoiceQueryStringSchema,
+    },
+    handler: async (request, reply) => {
+        const payload = request.query as {voice?: string, text?: string, cache?: boolean} ?? {}
+        const res = await axios.get("http://openTTS/api/tts", {
+            params: payload,
+        })
+        reply.type('audio/wav')
+        return res?.data
+    }
 }

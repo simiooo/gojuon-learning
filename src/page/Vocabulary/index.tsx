@@ -1,11 +1,11 @@
 import { useEventEmitter, useEventListener, useKeyPress, useLocalStorageState, useRequest } from 'ahooks'
 import { Avatar, Button, Card, Col, Descriptions, Divider, Input, List, message, Modal, Row, Skeleton, Space, Tag } from 'antd'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import prand from 'pure-rand';
-import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import { AudioMutedOutlined, AudioOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 const PAGE_SIZE = 200
 const seed = Date.now() ^ (Math.random() * 0x100000000);
 const rng = prand.xoroshiro128plus(seed);
@@ -22,6 +22,31 @@ export default function Vocabulary() {
     const [remembered, setRemembered] = useLocalStorageState<{ [key: string]: boolean }>('remembered', { defaultValue: {} })
     const [remHiddren, setRemHiddren] = useState<boolean>(true)
     const [currentRememberIndex, setCurrentRememberIndex] = useState(0)
+
+    const audioRef = useRef<HTMLAudioElement>()
+
+    const {data: ttsData, runAsync: ttsGetter, loading: ttsLoading} = useRequest(async (text?: string) => {
+        if(!text) {
+            throw Error('Please choose text to submit')
+        }
+        
+        const res = await axios.post('/api/tts', {
+            voice: 'coqui-tts:ja',
+            text: text,
+            cache: false,
+        })
+        if(!!ttsData) {
+            URL.revokeObjectURL(ttsData)
+        }
+        const url = URL.createObjectURL(res?.data)
+        return url
+    }, {
+        manual: true,
+        onSuccess(data) {
+            audioRef.current.src = data
+            audioRef.current.play()
+        }
+    })
 
     const { data, runAsync } = useRequest(async (current: number = 1) => {
         try {
@@ -75,6 +100,11 @@ export default function Vocabulary() {
                 overflowX: 'hidden',
             }}
         >
+            <audio 
+            ref={audioRef}
+            style={{display: 'none'}}
+            
+            ></audio>
             <Row
                 gutter={[16, 16]}
             >
@@ -91,7 +121,17 @@ export default function Vocabulary() {
                     onCancel={() => setRememberModal(false)}
                 >
                     <Card
-                        title={<h2>{renderCurrentRemember?.word}</h2>}
+                        title={<Space>
+                            <h2>{renderCurrentRemember?.word}</h2>
+                            
+                            <Button 
+                            icon={<AudioMutedOutlined />}
+                            loading={ttsLoading}
+                            onClick={() => {
+                                ttsGetter(renderCurrentRemember?.word)
+                            }}
+                            type="text"></Button>
+                        </Space> }
                     >
                         <Row
                             gutter={[16, 24]}
