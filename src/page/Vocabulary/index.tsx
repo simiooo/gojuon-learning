@@ -103,7 +103,7 @@ export default function Vocabulary() {
             ...unremembered
         })
         changeWord()
-    }, [remembered, renderCurrentRemember, data])
+    }, [remembered, renderCurrentRemember, data, unremembered])
 
     useKeyPress('alt.w', () => {
         rememberFn()
