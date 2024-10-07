@@ -1,5 +1,5 @@
-import { useEventEmitter, useEventListener, useKeyPress, useLocalStorageState, useRequest } from 'ahooks'
-import { Avatar, Button, Card, Col, Descriptions, Divider, Input, List, message, Modal, Row, Skeleton, Space, Tag } from 'antd'
+import { useEventEmitter, useEventListener, useInterval, useKeyPress, useLocalStorageState, useRequest } from 'ahooks'
+import { Avatar, Button, Card, Col, Descriptions, Divider, Input, List, message, Modal, Row, Skeleton, Space, Tag, Tooltip } from 'antd'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -20,10 +20,10 @@ export default function Vocabulary() {
     // const [modal, modalHolder] = Modal.useModal()
     const [cacheData, setCacheData] = useLocalStorageState<Word[]>("vocabulary", { defaultValue: [] })
     const [remembered, setRemembered] = useLocalStorageState<{ [key: string]: boolean }>('remembered', { defaultValue: {} })
+    const [unremembered, setUnremembered] = useLocalStorageState<{ [key: string]: boolean }>('unremembered', { defaultValue: {} })
     const [remHiddren, setRemHiddren] = useState<boolean>(true)
     const [currentRememberIndex, setCurrentRememberIndex] = useState(0)
 
-    const audioRef = useRef<HTMLAudioElement>()
 
     const { data: ttsData, runAsync: ttsGetter, loading: ttsLoading } = useRequest(async (text?: string) => {
         if (!text) {
@@ -39,7 +39,7 @@ export default function Vocabulary() {
         if (!!ttsData) {
             URL.revokeObjectURL(ttsData)
         }
-        // console.log(res?.data)
+
         const url = URL.createObjectURL(new Blob([res?.data], { type: "audio/wav", }))
         const audio = new Audio(url)
         audio.play()
@@ -47,9 +47,6 @@ export default function Vocabulary() {
     }, {
         manual: true,
         onSuccess(data) {
-            // console.log(data)
-            // audioRef.current.src = data
-            // audioRef.current.play()
         }
     })
 
@@ -76,26 +73,56 @@ export default function Vocabulary() {
         },
         // manual: true,
     })
+    const [unrememberedCount, setUnrememveredCount] = useState<number>(0)
+    const renderCurrentRemember = useMemo(() => {
+        const unrememberedEntries = Object.entries(unremembered ?? {})
+        if(unrememberedCount > 7 && unrememberedEntries.length > 0) {
+            setUnrememveredCount(0)
+            
+            const result = Math.floor(prand.unsafeUniformIntDistribution(0, Math.max((unrememberedEntries?.length ?? 1), 1) - 1, rng))
+            return JSON.parse(unrememberedEntries?.[result]?.[0] ?? '{}') as Word 
+        }
+        setUnrememveredCount(unrememberedCount + 1)
+        return cacheData[currentRememberIndex]
+    }, [cacheData, currentRememberIndex])
 
     const changeWord = useCallback(() => {
         const result = Math.floor(prand.unsafeUniformIntDistribution(0, (data?.list?.length ?? 1) - 1, rng))
-        console.log(result, "<---- word index")
         setCurrentRememberIndex(result)
     }, [data])
 
     useKeyPress('alt.d', () => {
         setRemHiddren(!remHiddren)
     })
+
+    const rememberFn = useCallback(() => {
+        const index = JSON.stringify(renderCurrentRemember ?? {})
+        setRemembered({ ...remembered, [index]: true })
+        delete unremembered[index]
+        setUnremembered({
+            ...unremembered
+        })
+        changeWord()
+    }, [remembered, renderCurrentRemember, data])
+
     useKeyPress('alt.w', () => {
-        setRemembered({ ...remembered, [JSON.stringify(renderCurrentRemember ?? {})]: true })
-        changeWord()
+        rememberFn()
     })
+    const unrememberFn = useCallback(() => {
+        setUnrememveredCount(0)
+        setUnremembered({
+            ...unremembered, [JSON.stringify(renderCurrentRemember ?? {})]: true
+        })
+        changeWord()
+    }, [renderCurrentRemember, unremembered, data])
     useKeyPress('alt.q', () => {
-        changeWord()
+        unrememberFn()
     })
-    const renderCurrentRemember = useMemo(() => {
-        return cacheData[currentRememberIndex]
-    }, [cacheData, currentRememberIndex])
+    useKeyPress('alt.e', () => {
+        ttsGetter(renderCurrentRemember?.kana)
+    })
+    
+    
 
     return (
         <div
@@ -105,11 +132,6 @@ export default function Vocabulary() {
                 overflowX: 'hidden',
             }}
         >
-            <audio
-                ref={audioRef}
-                style={{ display: 'none' }}
-
-            ></audio>
             <Row
                 gutter={[16, 16]}
             >
@@ -128,14 +150,18 @@ export default function Vocabulary() {
                     <Card
                         title={<Space>
                             <h2>{renderCurrentRemember?.word}</h2>
+                            <Tooltip
+                                title={'Shortcuts: alt + e'}
+                            >
+                                <Button
+                                    icon={<NotificationOutlined />}
+                                    loading={ttsLoading}
+                                    onClick={() => {
+                                        ttsGetter(renderCurrentRemember?.kana)
+                                    }}
+                                    type="text"></Button>
+                            </Tooltip>
 
-                            <Button
-                                icon={<NotificationOutlined />}
-                                loading={ttsLoading}
-                                onClick={() => {
-                                    ttsGetter(renderCurrentRemember?.kana)
-                                }}
-                                type="text"></Button>
                         </Space>}
                     >
                         <Row
@@ -163,30 +189,44 @@ export default function Vocabulary() {
                             </Col>
                             <Col span={24}>
                                 <Space>
-                                    <Button
-                                        onClick={() => {
-                                            setRemembered({ ...remembered, [JSON.stringify(renderCurrentRemember ?? {})]: true })
-                                            changeWord()
-                                        }}
-                                        type="link"
-                                    >Ok</Button>
-                                    <Button
-                                        onClick={() => {
-                                            changeWord()
-                                        }}
-                                        danger
-                                        type="link"
-                                    >Nope</Button>
+                                    <Tooltip
+                                        title="Shortcuts: alt + w"
+                                    >
+                                        <Button
+                                            onClick={() => {
+                                                rememberFn()
+                                            }}
+                                            type="link"
+                                        >Ok</Button>
+                                    </Tooltip>
+
+                                    <Tooltip
+                                        title="Shortcuts: alt + q"
+                                    >
+                                        <Button
+                                            onClick={() => {
+                                                unrememberFn()
+                                            }}
+                                            danger
+                                            type="link"
+                                        >Nope</Button>
+                                    </Tooltip>
+
                                     <Divider
                                         type="vertical"
                                     ></Divider>
-                                    <Button
-                                        onClick={() => {
-                                            setRemHiddren(!remHiddren)
-                                        }}
-                                        type="text"
-                                        icon={remHiddren ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-                                    >{!remHiddren ? 'To Hidden' : 'To Visible'}</Button>
+                                    <Tooltip
+                                        title="Shortcuts: alt + d"
+                                    >
+                                        <Button
+                                            onClick={() => {
+                                                setRemHiddren(!remHiddren)
+                                            }}
+                                            type="text"
+                                            icon={remHiddren ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                                        >{!remHiddren ? 'To Hidden' : 'To Visible'}</Button>
+                                    </Tooltip>
+
                                 </Space>
                             </Col>
                         </Row>
@@ -201,7 +241,7 @@ export default function Vocabulary() {
                             changeWord()
                             setRememberModal(true)
                         }}
-                    >Start Remember</Button>
+                    >To Remember</Button>
                     </Space>
                 </Col>
                 <Col span={24}>
