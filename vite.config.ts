@@ -5,7 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   server: {
     proxy: {
-      "/api" : "http://localhost:8081"
+      "/api" : "https://learning.squirrelso.top"
     }
   },
   plugins: [

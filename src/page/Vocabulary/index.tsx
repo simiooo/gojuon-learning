@@ -34,16 +34,20 @@ export default function Vocabulary() {
             text: text,
             cache: false,
         })
-        if(!!ttsData) {
-            URL.revokeObjectURL(ttsData)
-        }
-        const url = URL.createObjectURL(res?.data)
+        // if(!!ttsData) {
+        //     URL.revokeObjectURL(ttsData)
+        // }
+        // console.log(res?.data)
+        const url = URL.createObjectURL(new Blob([res?.data] , {type: "audio/wav",}))
+        const audio = new Audio(url)
+        audio.play()
         return url
     }, {
         manual: true,
         onSuccess(data) {
-            audioRef.current.src = data
-            audioRef.current.play()
+            // console.log(data)
+            // audioRef.current.src = data
+            // audioRef.current.play()
         }
     })
 

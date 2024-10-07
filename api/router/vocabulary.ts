@@ -64,8 +64,9 @@ export const getTTSVoice: RouteOptions = {
                 ...payload,
                 voice:'coqui-tts:ja_kokoro'
             },
+            responseType: 'stream'
         })
         reply.type('audio/wav')
-        return res?.data
+        return res
     }
 }
