@@ -72,7 +72,7 @@ export default function Vocabulary() {
                     title={<Space>
                         <h5>To Remeber</h5>
                         <span>{Object.keys(remembered ?? {}).length} remembered</span>
-                        </Space>  }
+                    </Space>}
                     // width={'80vw'}
                     // height={'80vh'}
                     footer={null}
@@ -86,25 +86,20 @@ export default function Vocabulary() {
                             gutter={[16, 24]}
                         >
                             <Col span={24}>
-                                <Descriptions
-                                    items={[
-                                        {
-                                            label: 'Kana',
-                                            children: remHiddren ? '****' : cacheData[currentRememberIndex]?.kana,
-                                            span: 24,
-                                        },
-                                        {
-                                            label: 'Chinese Meaning',
-                                            children: remHiddren ? '****' : cacheData[currentRememberIndex]?.chineseMeaning?.join('；'),
-                                            span: 24,
-                                        },
-                                        {
-                                            label: 'Word Class',
-                                            children: remHiddren ? '****' : cacheData[currentRememberIndex]?.wordClass,
-                                            span: 24,
-                                        },
-                                    ]}
-                                />
+                                <h3>Definition:</h3>
+                                <Row
+                                gutter={[16, 6]}
+                                >
+                                    <Col span={24}>
+                                        <Space>Kana: {remHiddren ? '****' : cacheData[currentRememberIndex]?.kana}</Space>
+                                    </Col>
+                                    <Col span={24}>
+                                        <Space>Chinese Meaning: {remHiddren ? '****' : cacheData[currentRememberIndex]?.chineseMeaning?.join('；')}</Space>
+                                    </Col>
+                                    <Col span={24}>
+                                        <Space>Word Class: {remHiddren ? '****' : cacheData[currentRememberIndex]?.wordClass}</Space>
+                                    </Col>
+                                </Row>
                             </Col>
                             <Col span={24}>
                                 <Input.TextArea></Input.TextArea>
