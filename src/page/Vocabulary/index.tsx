@@ -1,5 +1,5 @@
 import { useEventEmitter, useEventListener, useInterval, useKeyPress, useLocalStorageState, useRequest } from 'ahooks'
-import { Avatar, Button, Card, Col, Descriptions, Divider, Input, List, message, Modal, Row, Skeleton, Space, Tag, Tooltip } from 'antd'
+import { Avatar, Button, Card, Col, Descriptions, Divider, Form, Input, List, message, Modal, Row, Skeleton, Slider, Space, Tag, Tooltip } from 'antd'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -24,6 +24,22 @@ export default function Vocabulary() {
     const [remHiddren, setRemHiddren] = useState<boolean>(true)
     const [currentRememberIndex, setCurrentRememberIndex] = useState(0)
 
+    const { data: totalCount } = useRequest(async () => {
+        try {
+            const res = await axios.post<{ total: number }>('/api/v1/vocabularyCount', {
+
+            })
+            return res.data?.total ?? 0
+        } catch (error) {
+            message.error(error)
+        }
+
+    }, {
+        onSuccess() {
+            runAsync()
+        }
+    })
+
 
     const { data: ttsData, runAsync: ttsGetter, loading: ttsLoading } = useRequest(async (text?: string) => {
         if (!text) {
@@ -47,18 +63,23 @@ export default function Vocabulary() {
     }, {
         manual: true,
         onSuccess(data) {
+
         }
     })
 
-    const { data, runAsync } = useRequest(async (current: number = 1) => {
+    const { data, runAsync } = useRequest(async (current: number = 1, init?: boolean) => {
         try {
-            const res = await axios.post<{ data?: Word[], total: number }>('/api/v1/vocabulary', {
+            const res = await axios.post<{
+                isEnd?: boolean,
+                data?: Word[], total: number
+            }>('/api/v1/vocabulary', {
                 pageSize: PAGE_SIZE,
                 current,
             })
-            const result: { total: number, list: Word[], current?: number } = {
+            const result: { total: number, list: Word[], current?: number, isEnd?: boolean } = {
                 total: res?.data?.total ?? 0,
-                list: [...(data?.list ?? []), ...(res.data.data ?? [])],
+                isEnd: res?.data?.isEnd,
+                list: init ? res?.data?.data ?? [] : [...(data?.list ?? []), ...(res.data.data ?? [])],
                 current
             }
             setCacheData(result?.list ?? [])
@@ -71,16 +92,16 @@ export default function Vocabulary() {
         onSuccess() {
 
         },
-        // manual: true,
+        manual: true,
     })
     const [unrememberedCount, setUnrememveredCount] = useState<number>(0)
     const renderCurrentRemember = useMemo(() => {
         const unrememberedEntries = Object.entries(unremembered ?? {})
-        if(unrememberedCount > 7 && unrememberedEntries.length > 0) {
+        if (unrememberedCount > 7 && unrememberedEntries.length > 0) {
             setUnrememveredCount(0)
-            
+
             const result = Math.floor(prand.unsafeUniformIntDistribution(0, Math.max((unrememberedEntries?.length ?? 1), 1) - 1, rng))
-            return JSON.parse(unrememberedEntries?.[result]?.[0] ?? '{}') as Word 
+            return JSON.parse(unrememberedEntries?.[result]?.[0] ?? '{}') as Word
         }
         setUnrememveredCount(unrememberedCount + 1)
         return cacheData[currentRememberIndex]
@@ -121,8 +142,8 @@ export default function Vocabulary() {
     useKeyPress('alt.r', () => {
         ttsGetter(renderCurrentRemember?.kana)
     })
-    
-    
+
+
 
     return (
         <div
@@ -234,21 +255,51 @@ export default function Vocabulary() {
                     </Card>
                 </Modal>
                 <Col span={24}>
-                    <Space><Button
+                    <Form>
+                        <Row gutter={[16, 16]}>
+                            <Col>
+                                <Space>
+                                    <Button
 
-                        type={'primary'}
-                        onClick={() => {
-                            changeWord()
-                            setRememberModal(true)
-                        }}
-                    >To Remember</Button>
-                    </Space>
+                                        type={'primary'}
+                                        onClick={() => {
+                                            changeWord()
+                                            setRememberModal(true)
+                                        }}
+                                    >To Remember</Button>
+                                </Space>
+                            </Col>
+                            <Col flex={'1 1'}>
+                                <Form.Item
+                                    name="paginationRange"
+                                    noStyle
+                                >
+                                    <Slider
+                                        onChangeComplete={e => {
+                                            runAsync(e, true)
+                                        }}
+                                        tooltip={{
+                                            formatter(value) {
+                                                return `Start at ${(value - 1) * PAGE_SIZE}th word`;
+                                            },
+                                        }}
+                                        min={1}
+                                        max={Math.max(1, Math.ceil(totalCount / PAGE_SIZE))}
+                                    ></Slider>
+                                </Form.Item>
+
+                            </Col>
+                            <Col>
+                                <div style={{ width: '.5rem' }}></div>
+                            </Col>
+                        </Row>
+                    </Form>
                 </Col>
                 <Col span={24}>
                     <InfiniteScroll
                         dataLength={data?.list?.length ?? 0}
                         next={() => runAsync((data?.current ?? 0) + 1)}
-                        hasMore={(data?.list?.length ?? 0) < data?.total}
+                        hasMore={!data?.isEnd}
                         loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
                         endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
                         scrollableTarget="scrollableDiv"
@@ -267,7 +318,7 @@ export default function Vocabulary() {
                             }}
                             dataSource={data?.list}
                             renderItem={(item, index) => (
-                                <List.Item key={item.kana}>
+                                <List.Item key={item.kana + item.word + item.wordClass + index}>
                                     <Card
                                         title={item.word}
                                         extra={<Space>
@@ -286,9 +337,9 @@ export default function Vocabulary() {
                                                     wrap={true}
                                                     size={'small'}
                                                 >
-                                                    {item.chineseMeaning?.map(word => {
+                                                    {item.chineseMeaning?.map((word, index) => {
                                                         return <Tag
-                                                            key={word}
+                                                            key={word + index}
                                                             title={word}
                                                             color="blue"
                                                         >{word}</Tag>

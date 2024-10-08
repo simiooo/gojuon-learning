@@ -1,7 +1,8 @@
 import { RouteOptions } from "fastify"
-import { getTTSVoice, getVocabulary } from "./vocabulary"
+import { getTTSVoice, getVocabulary, getVocabularyCount } from "./vocabulary"
 
 export const routes: RouteOptions[] = [
     getVocabulary,
     getTTSVoice,
+    getVocabularyCount,
 ] 
