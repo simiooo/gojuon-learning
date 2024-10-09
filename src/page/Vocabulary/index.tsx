@@ -9,6 +9,7 @@ import { AudioMutedOutlined, AudioOutlined, EyeInvisibleOutlined, EyeOutlined, N
 const PAGE_SIZE = 200
 const seed = Date.now() ^ (Math.random() * 0x100000000);
 const rng = prand.xoroshiro128plus(seed);
+const UN_REMEMBERED_COUNT_UPPER = 4
 type Word = {
     word: string;
     kana: string;
@@ -97,7 +98,7 @@ export default function Vocabulary() {
     const [unrememberedCount, setUnrememveredCount] = useState<number>(0)
     const renderCurrentRemember = useMemo(() => {
         const unrememberedEntries = Object.entries(unremembered ?? {})
-        if (unrememberedCount > 7 && unrememberedEntries.length > 0) {
+        if (unrememberedCount > UN_REMEMBERED_COUNT_UPPER && unrememberedEntries.length > 0) {
             setUnrememveredCount(0)
 
             const result = Math.floor(prand.unsafeUniformIntDistribution(0, Math.max((unrememberedEntries?.length ?? 1), 1) - 1, rng))
