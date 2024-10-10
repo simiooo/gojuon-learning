@@ -1,5 +1,5 @@
 import { useEventEmitter, useEventListener, useInterval, useKeyPress, useLocalStorageState, useRequest } from 'ahooks'
-import { Avatar, Button, Card, Col, Descriptions, Divider, Form, Input, List, message, Modal, Row, Skeleton, Slider, Space, Tag, Tooltip } from 'antd'
+import { Avatar, Button, Card, Col, Descriptions, Divider, Form, Input, List, message, Modal, Popconfirm, Row, Skeleton, Slider, Space, Tag, Tooltip } from 'antd'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -162,6 +162,22 @@ export default function Vocabulary() {
                     title={<Space>
                         <h5>To Remember</h5>
                         <span>{Object.keys(remembered ?? {}).length} remembered</span>
+                        <Popconfirm
+                        title="Info"
+                        description={<Space
+                        direction='vertical'
+                        >
+                            {Object.entries(unremembered ?? {}).map(el => (<span
+                            key={el[0]}
+                            >{JSON.parse(el[0] ?? "{}")?.word}</span>))}
+                        </Space>}
+                        >
+                        <Button
+                        danger
+                        type="text"
+                        >{Object.keys(unremembered ?? {}).length} unremembered</Button>
+                        </Popconfirm>
+                        
                     </Space>}
                     // width={'80vw'}
                     // height={'80vh'}
