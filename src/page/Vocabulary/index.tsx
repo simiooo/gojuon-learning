@@ -163,21 +163,28 @@ export default function Vocabulary() {
                         <h5>To Remember</h5>
                         <span>{Object.keys(remembered ?? {}).length} remembered</span>
                         <Popconfirm
-                        title="Info"
-                        description={<Space
-                        direction='vertical'
+                            title="Info"
+                            description={<div
+                            style={{
+                                maxHeight: '80vh',
+                                overflow: 'auto',
+                            }}
+                            >
+                                <Space
+                                    direction='vertical'
+                                >
+                                    {Object.entries(unremembered ?? {}).map(el => (<span
+                                        key={el[0]}
+                                    >{JSON.parse(el[0] ?? "{}")?.word}</span>))}
+                                </Space>
+                            </div>}
                         >
-                            {Object.entries(unremembered ?? {}).map(el => (<span
-                            key={el[0]}
-                            >{JSON.parse(el[0] ?? "{}")?.word}</span>))}
-                        </Space>}
-                        >
-                        <Button
-                        danger
-                        type="text"
-                        >{Object.keys(unremembered ?? {}).length} unremembered</Button>
+                            <Button
+                                danger
+                                type="text"
+                            >{Object.keys(unremembered ?? {}).length} unremembered</Button>
                         </Popconfirm>
-                        
+
                     </Space>}
                     // width={'80vw'}
                     // height={'80vh'}
