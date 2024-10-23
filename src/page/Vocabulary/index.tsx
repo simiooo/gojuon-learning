@@ -113,7 +113,7 @@ export default function Vocabulary() {
         setCurrentRememberIndex(result)
     }, [data])
 
-    useKeyPress('alt.d', () => {
+    useKeyPress('alt.s', () => {
         setRemHiddren(!remHiddren)
     })
 
@@ -261,7 +261,7 @@ export default function Vocabulary() {
                                         type="vertical"
                                     ></Divider>
                                     <Tooltip
-                                        title="Shortcuts: alt + d"
+                                        title="Shortcuts: alt + s"
                                     >
                                         <Button
                                             onClick={() => {
