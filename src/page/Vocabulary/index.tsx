@@ -194,7 +194,12 @@ export default function Vocabulary() {
                 >
                     <Card
                         title={<Space>
-                            <h2>{renderCurrentRemember?.word}</h2>
+                            <h2
+                            style={{
+                                fontWeight: 400,
+                                fontSize: '3rem',
+                            }}
+                            >{renderCurrentRemember?.word}</h2>
                             <Tooltip
                                 title={'Shortcuts: alt + r'}
                             >
