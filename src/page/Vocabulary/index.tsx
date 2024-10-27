@@ -165,17 +165,37 @@ export default function Vocabulary() {
                         <Popconfirm
                             title="Info"
                             description={<div
-                            style={{
-                                maxHeight: '80vh',
-                                overflow: 'auto',
-                            }}
+                                style={{
+                                    maxHeight: '80vh',
+                                    overflow: 'auto',
+                                }}
                             >
                                 <Space
                                     direction='vertical'
                                 >
-                                    {Object.entries(unremembered ?? {}).map(el => (<span
-                                        key={el[0]}
-                                    >{JSON.parse(el[0] ?? "{}")?.word}</span>))}
+                                    {Object.entries(unremembered ?? {}).map(el => {
+                                        const entry = JSON.parse(el[0] ?? "{}")
+                                        return (
+                                            <Tooltip
+                                                title={<div>
+                                                    <Space
+                                                        direction='vertical'
+                                                    >
+                                                        <div>
+                                                            {entry?.chineseMeaning}
+                                                        </div>
+                                                        <div>
+                                                            {entry?.wordClass}
+                                                        </div>
+                                                    </Space>
+                                                </div>}
+                                            >
+                                                <span
+                                                    key={el[0]}
+                                                >{entry?.word}</span>
+                                            </Tooltip>
+                                        )
+                                    })}
                                 </Space>
                             </div>}
                         >
@@ -195,10 +215,10 @@ export default function Vocabulary() {
                     <Card
                         title={<Space>
                             <h2
-                            style={{
-                                fontWeight: 400,
-                                fontSize: '3rem',
-                            }}
+                                style={{
+                                    fontWeight: 400,
+                                    fontSize: '3rem',
+                                }}
                             >{renderCurrentRemember?.word}</h2>
                             <Tooltip
                                 title={'Shortcuts: alt + r'}
