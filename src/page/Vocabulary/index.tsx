@@ -182,6 +182,9 @@ export default function Vocabulary() {
                                                         direction='vertical'
                                                     >
                                                         <div>
+                                                            {entry?.kana}
+                                                        </div>
+                                                        <div>
                                                             {entry?.chineseMeaning}
                                                         </div>
                                                         <div>
