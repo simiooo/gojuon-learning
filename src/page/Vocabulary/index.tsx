@@ -185,7 +185,7 @@ export default function Vocabulary() {
                                                             {entry?.kana}
                                                         </div>
                                                         <div>
-                                                            {entry?.chineseMeaning}
+                                                            {entry?.chineseMeaning?.join(';')}
                                                         </div>
                                                         <div>
                                                             {entry?.wordClass}
