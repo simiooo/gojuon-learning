@@ -141,7 +141,7 @@ export default function Vocabulary() {
         unrememberFn()
     })
     useKeyPress('alt.r', () => {
-        ttsGetter(renderCurrentRemember?.kana)
+        ttsGetter(renderCurrentRemember?.kana ?? renderCurrentRemember?.word)
     })
 
 

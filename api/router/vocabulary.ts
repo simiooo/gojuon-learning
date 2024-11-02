@@ -80,6 +80,24 @@ export const getTTSVoice: RouteOptions = {
         return res.data
     }
 }
+export const getTTSVoiceByQuery: RouteOptions = {
+    method: 'GET',
+    url: '/api/tts',
+    schema: {
+        querystring: getTTSVoiceQueryStringSchema,
+    },
+    handler: async (request, reply) => {
+        const payload = request.query as { voice?: string, text?: string, cache?: boolean } ?? {}
+        const res = await axios.get("http://openTTS:5500/api/tts", {
+            params: {
+                ...payload,
+                voice: 'coqui-tts:ja_kokoro'
+            },
+            responseType: 'arraybuffer'
+        })
+        return res.data
+    }
+}
 
 export const getVocabularyCount: RouteOptions = {
     method: 'POST',
