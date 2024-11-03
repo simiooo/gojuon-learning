@@ -230,7 +230,7 @@ export default function Vocabulary() {
                                     icon={<NotificationOutlined />}
                                     loading={ttsLoading}
                                     onClick={() => {
-                                        ttsGetter(renderCurrentRemember?.kana)
+                                        ttsGetter(renderCurrentRemember?.kana ?? renderCurrentRemember?.word)
                                     }}
                                     type="text"></Button>
                             </Tooltip>
