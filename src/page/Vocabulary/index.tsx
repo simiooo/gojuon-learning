@@ -5,7 +5,7 @@ import axios from 'axios'
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 import prand from 'pure-rand';
-import { AudioMutedOutlined, AudioOutlined, EyeInvisibleOutlined, EyeOutlined, NotificationOutlined } from '@ant-design/icons';
+import { AudioMutedOutlined, AudioOutlined, EyeInvisibleOutlined, EyeOutlined, NotificationOutlined, WarningOutlined } from '@ant-design/icons';
 const PAGE_SIZE = 200
 const seed = Date.now() ^ (Math.random() * 0x100000000);
 const rng = prand.xoroshiro128plus(seed);
@@ -378,6 +378,11 @@ export default function Vocabulary() {
                                         type="link"
                                         size='small'
                                         >Remembered</Button> */}
+                                            <Tooltip
+                                                title="Never encoutered the word in Remember Card"
+                                            >
+                                                <WarningOutlined />
+                                            </Tooltip>
                                         </Space>}
                                     >
                                         <Card.Meta title={item.kana} description={<Row
@@ -401,6 +406,7 @@ export default function Vocabulary() {
                                         </Row>} />
 
                                     </Card>
+                                    {(index + 1) % PAGE_SIZE === 0 ? <Divider></Divider> : undefined}
 
 
                                 </List.Item>
