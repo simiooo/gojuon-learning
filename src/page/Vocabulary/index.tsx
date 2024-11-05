@@ -177,6 +177,7 @@ export default function Vocabulary() {
                                         const entry = JSON.parse(el[0] ?? "{}")
                                         return (
                                             <Tooltip
+                                                key={el[0]}
                                                 title={<div>
                                                     <Space
                                                         direction='vertical'
@@ -374,15 +375,12 @@ export default function Vocabulary() {
                                     <Card
                                         title={item.word}
                                         extra={<Space>
-                                            {/* <Button
-                                        type="link"
-                                        size='small'
-                                        >Remembered</Button> */}
-                                            <Tooltip
+                                            {(JSON.stringify(item ?? {}) in {...remembered, ...unremembered}) ? undefined : <Tooltip
                                                 title="Never encoutered the word in Remember Card"
                                             >
                                                 <WarningOutlined />
-                                            </Tooltip>
+                                            </Tooltip>}
+                                            
                                         </Space>}
                                     >
                                         <Card.Meta title={item.kana} description={<Row
