@@ -41,6 +41,6 @@ jobs:
           # 列出所有名为 simooowann/gujuon-learning-app 的镜像，并删除
           echo ${{secrets.ROOT_PWD}} | sudo -S docker images -q simooowann/gujuon-learning-app | xargs docker rmi -f
           echo ${{secrets.ROOT_PWD}} | sudo -S docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/gujuon-learning-app:latest
-          cd /home/simooo/mongodb  # 替换为docker-compose所在的目录
+          cd ~/jp_learning_conf  # 替换为docker-compose所在的目录
           echo ${{secrets.ROOT_PWD}} | sudo -S docker compose down
           echo ${{secrets.ROOT_PWD}} | sudo -S docker compose up -d
