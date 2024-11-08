@@ -17,8 +17,6 @@ jobs:
     # 使用 GitHub Secrets 中的 Docker Hub 凭证进行登录
     - name: Log in to Docker Hub
       run: |
-        # echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{
-        # secrets.DOCKER_HUB_USERNAME }}" --password-stdin
         echo "${{secrets.ROOT_PWD}}" | sudo -S sh -c "echo ${{secrets.DOCKER_HUB_PASSWORD}} | docker login -u '${{secrets.DOCKER_HUB_USERNAME}}' --password-stdin"
 
     # 构建 Docker 镜像
