@@ -68,7 +68,7 @@ export default function Vocabulary() {
         }
     })
 
-    const { data, runAsync } = useRequest(async (current: number = 1, init?: boolean) => {
+    const { data, runAsync,loading: wordsLoading } = useRequest(async (current: number = 1, init?: boolean) => {
         try {
             const res = await axios.post<{
                 isEnd?: boolean,
@@ -222,6 +222,7 @@ export default function Vocabulary() {
                                 style={{
                                     fontWeight: 400,
                                     fontSize: '3rem',
+                                    whiteSpace: 'break-spaces',
                                 }}
                             >{renderCurrentRemember?.word}</h2>
                             <Tooltip
