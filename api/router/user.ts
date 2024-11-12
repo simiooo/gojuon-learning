@@ -4,18 +4,18 @@ function getProfile() {
 
 }
 
-const loginByGoogleRoute: RouteOptions = {
+// const loginByGoogleRoute: RouteOptions = {
 
-}
+// }
 
 function signUpByGoogle() {
 
 }
 
-const getRememberTaskInfoRoute: RouteOptions =  {
+// const getRememberTaskInfoRoute: RouteOptions =  {
 
-}
+// }
 
-const setRememberTaskInfoRoute: RouteOptions = {
+// const setRememberTaskInfoRoute: RouteOptions = {
 
-}
+// }
