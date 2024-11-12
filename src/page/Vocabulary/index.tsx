@@ -68,7 +68,7 @@ export default function Vocabulary() {
         }
     })
 
-    const { data, runAsync,loading: wordsLoading } = useRequest(async (current: number = 1, init?: boolean) => {
+    const { data, runAsync,loading: wordsLoading, refresh } = useRequest(async (current: number = 1, init?: boolean) => {
         try {
             const res = await axios.post<{
                 isEnd?: boolean,
@@ -321,6 +321,12 @@ export default function Vocabulary() {
                                             setRememberModal(true)
                                         }}
                                     >To Remember</Button>
+                                    <Button
+                                    type="text"
+                                    onClick={() => refresh()}
+                                    >
+                                        Refresh
+                                    </Button>
                                 </Space>
                             </Col>
                             <Col flex={'1 1'}>
