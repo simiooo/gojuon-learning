@@ -1,5 +1,5 @@
 import { useEventEmitter, useEventListener, useInterval, useKeyPress, useLocalStorageState, useRequest } from 'ahooks'
-import { Avatar, Button, Card, Col, Descriptions, Divider, Form, Input, List, message, Modal, Popconfirm, Row, Skeleton, Slider, Space, Tag, Tooltip } from 'antd'
+import { Avatar, Button, Card, Col, Descriptions, Divider, Form, Input, List, message, Modal, Popconfirm, Row, Skeleton, Slider, Space, Spin, Tag, Tooltip } from 'antd'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -68,7 +68,7 @@ export default function Vocabulary() {
         }
     })
 
-    const { data, runAsync,loading: wordsLoading, refresh } = useRequest(async (current: number = 1, init?: boolean) => {
+    const { data, runAsync, loading: wordsLoading, refresh } = useRequest(async (current: number = 1, init?: boolean) => {
         try {
             const res = await axios.post<{
                 isEnd?: boolean,
@@ -309,51 +309,56 @@ export default function Vocabulary() {
                     </Card>
                 </Modal>
                 <Col span={24}>
-                    <Form>
-                        <Row gutter={[16, 16]}>
-                            <Col>
-                                <Space>
-                                    <Button
+                    <Spin
+                        spinning={wordsLoading}
+                    >
+                        <Form>
+                            <Row gutter={[16, 16]}>
+                                <Col>
+                                    <Space>
+                                        <Button
 
-                                        type={'primary'}
-                                        onClick={() => {
-                                            changeWord()
-                                            setRememberModal(true)
-                                        }}
-                                    >To Remember</Button>
-                                    <Button
-                                    type="text"
-                                    onClick={() => refresh()}
+                                            type={'primary'}
+                                            onClick={() => {
+                                                changeWord()
+                                                setRememberModal(true)
+                                            }}
+                                        >To Remember</Button>
+                                        <Button
+                                            type="text"
+                                            onClick={() => refresh()}
+                                        >
+                                            Refresh
+                                        </Button>
+                                    </Space>
+                                </Col>
+                                <Col flex={'1 1'}>
+                                    <Form.Item
+                                        name="paginationRange"
+                                        noStyle
                                     >
-                                        Refresh
-                                    </Button>
-                                </Space>
-                            </Col>
-                            <Col flex={'1 1'}>
-                                <Form.Item
-                                    name="paginationRange"
-                                    noStyle
-                                >
-                                    <Slider
-                                        onChangeComplete={e => {
-                                            runAsync(e, true)
-                                        }}
-                                        tooltip={{
-                                            formatter(value) {
-                                                return `Start at ${(value - 1) * PAGE_SIZE}th word`;
-                                            },
-                                        }}
-                                        min={1}
-                                        max={Math.max(1, Math.ceil(totalCount / PAGE_SIZE))}
-                                    ></Slider>
-                                </Form.Item>
+                                        <Slider
+                                            onChangeComplete={e => {
+                                                runAsync(e, true)
+                                            }}
+                                            tooltip={{
+                                                formatter(value) {
+                                                    return `Start at ${(value - 1) * PAGE_SIZE}th word`;
+                                                },
+                                            }}
+                                            min={1}
+                                            max={Math.max(1, Math.ceil(totalCount / PAGE_SIZE))}
+                                        ></Slider>
+                                    </Form.Item>
 
-                            </Col>
-                            <Col>
-                                <div style={{ width: '.5rem' }}></div>
-                            </Col>
-                        </Row>
-                    </Form>
+                                </Col>
+                                <Col>
+                                    <div style={{ width: '.5rem' }}></div>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Spin>
+
                 </Col>
                 <Col span={24}>
                     <InfiniteScroll
@@ -382,12 +387,12 @@ export default function Vocabulary() {
                                     <Card
                                         title={item.word}
                                         extra={<Space>
-                                            {(JSON.stringify(item ?? {}) in {...remembered, ...unremembered}) ? undefined : <Tooltip
+                                            {(JSON.stringify(item ?? {}) in { ...remembered, ...unremembered }) ? undefined : <Tooltip
                                                 title="Never encoutered the word in Remember Card"
                                             >
                                                 <WarningOutlined />
                                             </Tooltip>}
-                                            
+
                                         </Space>}
                                     >
                                         <Card.Meta title={item.kana} description={<Row
