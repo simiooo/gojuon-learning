@@ -12,18 +12,26 @@ const __dirname = path.dirname(__filename); // get the name of the directory
 const mongo = {
     username: process.env.MONGO_USERNAME ?? 'root',
     password: process.env.MONGO_PWD ?? 'rootPwd123',
-    host: process.env.MONGO_HOST ?? '192.168.31.172:27017',
-    db: process.env.MONGO_DBNAME ?? 'japanese_words'
+    host: process.env.MONGO_HOST ?? '10.14.0.8:27017',
+    db: process.env.MONGO_DBNAME ?? 'japanese_words',
+    grammarDb: process.env.MONGO_GRAMMAR_DBNAME ?? 'japanese_grammar',
 }
-const mongoConnectionString = `mongodb://${encodeURIComponent(mongo.username)}:${encodeURIComponent(mongo.password)}@${mongo.host}/${mongo.db}?authSource=admin`
-console.log(mongoConnectionString);
+const mongoWordsConnectionString = `mongodb://${encodeURIComponent(mongo.username)}:${encodeURIComponent(mongo.password)}@${mongo.host}/${mongo.db}?authSource=admin`
+const mongoGrammarConnectionString = `mongodb://${encodeURIComponent(mongo.username)}:${encodeURIComponent(mongo.password)}@${mongo.host}/${mongo.grammarDb}?authSource=admin`
+console.log(mongoWordsConnectionString);
 
 const serverInstance = Fastify({
     logger: true
 }).withTypeProvider<JsonSchemaToTsProvider>()
 serverInstance.register(mongodb, {
     forceClose: true,
-    url: mongoConnectionString,
+    url: mongoWordsConnectionString,
+    name: 'WORDS'
+})
+serverInstance.register(mongodb, {
+    forceClose: true,
+    url: mongoGrammarConnectionString,
+    name: 'GRAMMAR'
 })
 console.log(path.join(__dirname, '../dist'));
 

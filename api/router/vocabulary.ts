@@ -40,17 +40,15 @@ export const getVocabulary: RouteOptions = {
     },
     handler: async (request, reply,) => {
         const payload = request.body as { pageSize: number, current: number, kana?: string, kanji?: string }
-        const cursor = request.server.mongo.db?.collection('minano_nihonngo').find({
+        const cursor = request.server.mongo.WORDS.db?.collection('minano_nihonngo').find({
             "$or": [
                 { 'word': { '$regex': new RegExp(`${payload["kanji"] ?? ''}`) }, },
                 { "kana": { '$regex': new RegExp(`${payload["kana"] ?? ''}`) } }
             ],
-        }).skip(payload["pageSize"] * (payload["current"] - 1)).limit(payload["pageSize"]).project({
-            _id: 0,
-        })
+        }).skip(payload["pageSize"] * (payload["current"] - 1)).limit(payload["pageSize"])
         
         const result = await cursor?.toArray()
-        const total = await request.server.mongo.db?.collection('minano_nihonngo').countDocuments()
+        const total = await request.server.mongo.WORDS.db?.collection('minano_nihonngo').countDocuments()
         return { 
             status: 200, 
             data: result ?? [], 
@@ -108,7 +106,7 @@ export const getVocabularyCount: RouteOptions = {
     handler: async (request, reply) => {
 
         return {
-            total: await request.server.mongo.db?.collection('minano_nihonngo').countDocuments()
+            total: await request.server.mongo.WORDS.db?.collection('minano_nihonngo').countDocuments()
         }
     }
 }

@@ -1,0 +1,19 @@
+.container{
+    display: flex;
+    gap: 2px;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 82px;
+    overflow: auto;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    .mark{
+        flex: 0 0 10px;
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        background-color: #fafafa;
+        border: 1px solid #7e8087;
+    }
+}

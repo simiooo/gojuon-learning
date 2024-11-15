@@ -6,6 +6,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 import prand from 'pure-rand';
 import { AudioMutedOutlined, AudioOutlined, EyeInvisibleOutlined, EyeOutlined, NotificationOutlined, WarningOutlined } from '@ant-design/icons';
+import ProgressMap from '../../components/ProgressMap';
 const PAGE_SIZE = 200
 const seed = Date.now() ^ (Math.random() * 0x100000000);
 const rng = prand.xoroshiro128plus(seed);
@@ -333,23 +334,31 @@ export default function Vocabulary() {
                                     </Space>
                                 </Col>
                                 <Col flex={'1 1'}>
-                                    <Form.Item
-                                        name="paginationRange"
-                                        noStyle
-                                    >
-                                        <Slider
-                                            onChangeComplete={e => {
-                                                runAsync(e, true)
-                                            }}
-                                            tooltip={{
-                                                formatter(value) {
-                                                    return `Start at ${(value - 1) * PAGE_SIZE}th word`;
-                                                },
-                                            }}
-                                            min={1}
-                                            max={Math.max(1, Math.ceil(totalCount / PAGE_SIZE))}
-                                        ></Slider>
-                                    </Form.Item>
+                                    <div>
+                                        <Form.Item
+                                            name="paginationRange"
+                                            noStyle
+                                        >
+                                            <Slider
+                                                onChangeComplete={e => {
+                                                    runAsync(e, true)
+                                                }}
+                                                tooltip={{
+                                                    formatter(value) {
+                                                        return `Start at ${(value - 1) * PAGE_SIZE}th word`;
+                                                    },
+                                                }}
+                                                min={1}
+                                                max={Math.max(1, Math.ceil(totalCount / PAGE_SIZE))}
+                                            ></Slider>
+                                        </Form.Item>
+                                        {/* <div>
+                                        <ProgressMap
+                                        data={[1,1,1,23,123,1,123,21,12,312,3,123,12,1]}
+                                        ></ProgressMap>
+                                        </div> */}
+                                    </div>
+
 
                                 </Col>
                                 <Col>

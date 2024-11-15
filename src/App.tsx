@@ -8,6 +8,7 @@ import prand from 'pure-rand'
 import OcrPage from './page/OcrPage';
 import KanaLearning from './page/KanaLearning';
 import Vocabulary from './page/Vocabulary';
+import Grammar from './page/Grammar';
 
 
 
@@ -37,6 +38,11 @@ function App() {
             label: 'Vocabulary',
             key: '3',
             children: <Vocabulary />,
+          },
+          {
+            label: 'Grammar',
+            key: '4',
+            children: <Grammar />,
           },
         ]}
       >
