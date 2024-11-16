@@ -1,6 +1,6 @@
-import { WarningOutlined } from '@ant-design/icons'
+import { SearchOutlined, WarningOutlined } from '@ant-design/icons'
 import { useKeyPress, useLocalStorageState, useRequest } from 'ahooks'
-import { Button, Card, Col, Divider, List, Row, Skeleton, Space, Tag, Tooltip } from 'antd'
+import { Button, Card, Col, Divider, Form, Input, List, Row, Skeleton, Space, Tag, Tooltip } from 'antd'
 import axios from 'axios'
 import prand from 'pure-rand'
 import React, { useCallback, useMemo, useState } from 'react'
@@ -28,10 +28,10 @@ export default function Grammar() {
     const [unremembered, setUnremembered] = useLocalStorageState<{ [key: string]: boolean }>('unrememberedGrammar', { defaultValue: {} })
     const [unrememberedCount, setUnrememveredCount] = useState<number>(0)
     const [currentRememberIndex, setCurrentRememberIndex] = useState(0)
-
+    const [form] = Form.useForm()
     const [modalOpen, setModalOpen] = useState<boolean>(false)
-    
-    
+
+
 
     const { data, runAsync, loading: grammarLoading, refresh } = useRequest(async (current: number = 1, init?: boolean) => {
         try {
@@ -41,6 +41,7 @@ export default function Grammar() {
             }>('/api/v1/grammar', {
                 pageSize: PAGE_SIZE,
                 current,
+                keywords: form.getFieldValue(['keywords'])?.trim()
             })
             const result: { total: number, list: GrammarItem[], current?: number, isEnd?: boolean } = {
                 total: res?.data?.total ?? 0,
@@ -58,6 +59,7 @@ export default function Grammar() {
         onSuccess() {
 
         },
+        // debounceWait: 200,
         // manual: true,
     })
 
@@ -90,7 +92,7 @@ export default function Grammar() {
                     ["Content", el.content],
                     ["Example", el.example],
                     ["Extra", el.extra],
-               
+
                 ]
             }).flat() as [string, string][]
         }
@@ -99,13 +101,13 @@ export default function Grammar() {
     const unrememberFn = useCallback((id: string) => {
         setUnremembered({ ...unremembered, [id]: true })
         delete remembered[id]
-        setRemembered({...remembered})
+        setRemembered({ ...remembered })
         changeWord()
     }, [renderCurrentRemember, unremembered, data])
     const rememberFn = useCallback((id: string) => {
         setRemembered({ ...remembered, [id]: true })
         delete unremembered[id]
-        setUnremembered({...unremembered})
+        setUnremembered({ ...unremembered })
         changeWord()
     }, [remembered, renderCurrentRemember, data, unremembered])
 
@@ -143,7 +145,32 @@ export default function Grammar() {
             <Row>
                 <Col span="24">
                     <Space>
+                        <Form
+                            form={form}
+                            onFinish={() => runAsync(1, true)}
+                        ><Space.Compact>
+                                <Form.Item
+                                    name="keywords"
+                                    noStyle
+                                >
+
+                                    <Input
+                                        placeholder='Keywords To Filter'
+                                        // onChange={() => {
+                                        //     runAsync(1, true)
+                                        // }}
+                                        allowClear
+                                    ></Input></Form.Item>
+                                <Button
+                                htmlType='submit'
+                                type="primary"
+                                
+                                loading={grammarLoading}
+                                icon={<SearchOutlined />}></Button>
+                            </Space.Compact>
+                        </Form>
                         <Button
+
                             loading={grammarLoading}
                             onClick={() => {
                                 refresh()
@@ -154,11 +181,12 @@ export default function Grammar() {
                             Refresh
                         </Button>
                         <Button
-                        onClick={() => {
-                            changeWord()
-                            setModalOpen(true)
-                        }}
+                            onClick={() => {
+                                changeWord()
+                                setModalOpen(true)
+                            }}
                         >To Remember</Button>
+
                     </Space>
                 </Col>
                 <Col span="24">
@@ -254,6 +282,6 @@ export default function Grammar() {
                     </div>
                 </Col>
             </Row>
-        </div>
+        </div >
     )
 }
