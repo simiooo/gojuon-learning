@@ -26,10 +26,10 @@ export default function Vocabulary() {
     const [remHiddren, setRemHiddren] = useState<boolean>(true)
     const [currentRememberIndex, setCurrentRememberIndex] = useState(0)
 
-    const { data: totalCount } = useRequest(async () => {
+    const { data: totalCount, refresh: countRefresh } = useRequest(async () => {
         try {
             const res = await axios.post<{ total: number }>('/api/v1/vocabularyCount', {
-
+                keywords: form.getFieldValue(["keywords"]),
             })
             return res.data?.total ?? 0
         } catch (error) {
@@ -68,6 +68,7 @@ export default function Vocabulary() {
 
         }
     })
+    const [form] = Form.useForm()
 
     const { data, runAsync, loading: wordsLoading, refresh } = useRequest(async (current: number = 1, init?: boolean) => {
         try {
@@ -77,6 +78,7 @@ export default function Vocabulary() {
             }>('/api/v1/vocabulary', {
                 pageSize: PAGE_SIZE,
                 current,
+                keywords: form.getFieldValue(["keywords"]),
             })
             const result: { total: number, list: Word[], current?: number, isEnd?: boolean } = {
                 total: res?.data?.total ?? 0,
@@ -313,10 +315,34 @@ export default function Vocabulary() {
                     <Spin
                         spinning={wordsLoading}
                     >
-                        <Form>
+                        <Form
+                            form={form}
+                            onFinish={() => {
+
+                            }}
+                        >
                             <Row gutter={[16, 16]}>
                                 <Col>
                                     <Space>
+                                        <Space.Compact>
+                                            <Form.Item
+                                                // label="keyword"
+                                                noStyle
+                                                name="keywords"
+                                            >
+                                                <Input
+                                                    placeholder='Keywords to filter.'
+                                                ></Input>
+                                            </Form.Item>
+                                            <Button
+                                            loading={wordsLoading}
+                                            onClick={() => {
+                                                // countRefresh()
+                                                runAsync(1, true)
+                                            }}
+                                            >Search</Button>
+                                        </Space.Compact>
+
                                         <Button
 
                                             type={'primary'}

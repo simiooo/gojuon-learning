@@ -39,16 +39,28 @@ export const getVocabulary: RouteOptions = {
         // E.g. check authentication
     },
     handler: async (request, reply,) => {
-        const payload = request.body as { pageSize: number, current: number, kana?: string, kanji?: string }
-        const cursor = request.server.mongo.WORDS.db?.collection('minano_nihonngo').find({
-            "$or": [
-                { 'word': { '$regex': new RegExp(`${payload["kanji"] ?? ''}`) }, },
-                { "kana": { '$regex': new RegExp(`${payload["kana"] ?? ''}`) } }
-            ],
-        }).skip(payload["pageSize"] * (payload["current"] - 1)).limit(payload["pageSize"])
+        const payload = request.body as { pageSize: number, current: number, keywords?: string }
+        const keywordPattern = new RegExp(payload?.keywords ?? '', 'i')
+        const mongoQueryObject = {
+            "$or" : [ 
+                {
+                    word: keywordPattern
+                }, 
+                {
+                    kana: keywordPattern
+                },
+                {
+                    wordClass: keywordPattern
+                },
+                {
+                    chineseMeaning: {$elemMatch : {$regex: keywordPattern}}
+                }
+            ]
+        }
+        const cursor = request.server.mongo.WORDS.db?.collection('minano_nihonngo').find(mongoQueryObject).skip(payload["pageSize"] * (payload["current"] - 1)).limit(payload["pageSize"])
         
         const result = await cursor?.toArray()
-        const total = await request.server.mongo.WORDS.db?.collection('minano_nihonngo').countDocuments()
+        const total = await request.server.mongo.WORDS.db?.collection('minano_nihonngo').countDocuments(mongoQueryObject)
         return { 
             status: 200, 
             data: result ?? [], 
