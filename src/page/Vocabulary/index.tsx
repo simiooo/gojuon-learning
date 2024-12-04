@@ -420,7 +420,12 @@ export default function Vocabulary() {
                             renderItem={(item, index) => (
                                 <List.Item key={item.kana + item.word + item.wordClass + index}>
                                     <Card
-                                        title={item.word}
+                                        title={<div
+                                        style={{
+                                            fontWeight: 400,
+                                            fontSize: 24,
+                                        }}
+                                        >{item.word}</div> }
                                         extra={<Space>
                                             {(JSON.stringify(item ?? {}) in { ...remembered, ...unremembered }) ? undefined : <Tooltip
                                                 title="Never encoutered the word in Remember Card"
