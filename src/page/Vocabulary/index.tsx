@@ -3,6 +3,7 @@ import { Avatar, Button, Card, Col, Descriptions, Divider, Form, Input, List, me
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import InfiniteScroll from 'react-infinite-scroll-component';
+import styles from './index.module.css'
 
 import prand from 'pure-rand';
 import { AudioMutedOutlined, AudioOutlined, EyeInvisibleOutlined, EyeOutlined, NotificationOutlined, WarningOutlined } from '@ant-design/icons';
@@ -420,7 +421,9 @@ export default function Vocabulary() {
                             renderItem={(item, index) => (
                                 <List.Item key={item.kana + item.word + item.wordClass + index}>
                                     <Card
+                                        tabIndex={0}
                                         title={<div
+                                        className={styles.card}
                                         style={{
                                             fontWeight: 400,
                                             fontSize: 24,
