@@ -1,6 +1,7 @@
 import { RouteOptions } from 'fastify'
 import { S } from 'fluent-json-schema'
 import axios from 'axios'
+import { authenticate } from '../middleware/auth'
 
 
 const getVocabularyBodyJsonSchema = S.object()
@@ -19,6 +20,7 @@ const getTTSVoiceQueryStringSchema = S.object()
 export const getVocabulary: RouteOptions = {
     method: 'POST',
     url: '/api/v1/vocabulary',
+    preHandler: [authenticate],
     schema: {
         body: getVocabularyBodyJsonSchema,
         response: {
@@ -34,9 +36,6 @@ export const getVocabulary: RouteOptions = {
                 }
             }
         }
-    },
-    preHandler: async (request, reply) => {
-        // E.g. check authentication
     },
     handler: async (request, reply,) => {
         const payload = request.body as { pageSize: number, current: number, keywords?: string }
