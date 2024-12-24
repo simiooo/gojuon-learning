@@ -1,5 +1,5 @@
 # 使用官方 Node.js 20 镜像
-FROM node:20.18.0
+FROM node:20.18.0 AS builder
 
 # 设置工作目录
 WORKDIR /app
@@ -22,14 +22,14 @@ COPY . .
 # 编译项目
 RUN pnpm build
 
-# 暴露端口 8081
-EXPOSE 8081
+# 第二阶段：Nginx 部署环境
+FROM nginx:latest
 
-# 定义环境变量的默认值，可以在 docker run 时通过 -e 参数覆盖
-ENV MONGO_USERNAME=root \
-    MONGO_PWD=rootPwd123 \
-    MONGO_HOST=localhost:27017 \
-    MONGO_DBNAME=japanese_words
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# 启动命令
-CMD ["pnpm", "start:api"]
+# 配置 Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -13,18 +13,18 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token && location.pathname !== '/login') {
-      navigate('/login');
-    }
-  }, [location.pathname]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem('token');
+  //   if (!token && location.pathname !== '/login') {
+  //     navigate('/login');
+  //   }
+  // }, [location.pathname]);
 
-  useEffect(() => {
-    location.pathname === '/' && navigate('/learning')
-    console.log(location.pathname)
-    location.pathname !== '/' && setCurrentTab(location.pathname)
-  }, [])
+  // useEffect(() => {
+  //   location.pathname === '/' && navigate('/learning')
+  //   console.log(location.pathname)
+  //   location.pathname !== '/' && setCurrentTab(location.pathname)
+  // }, [])
 
   return (
     <Layout
