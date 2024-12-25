@@ -29,6 +29,7 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 
 # 配置 Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY mime.types /etc/nginx/mime.types
 
 EXPOSE 80
 
